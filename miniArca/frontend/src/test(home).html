@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINIARCA - 홈 페이지</title>
+    <style>
+        @font-face {
+            font-family: 'LeeSeoyun';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2202-2@1.0/LeeSeoyun.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .home-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'LeeSeoyun', sans-serif;
+            background: linear-gradient(135deg, #fef9e7 0%, #f0f8ff 30%, #fdf2f8 60%, #f0f9ff 100%);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            padding-bottom: 250px;
+            /* 더 위로 올림 */
+        }
+
+        /* 배경 글래스 오브들 - 로고와 더 잘 어울리게 */
+        .glass-orb {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg,
+                    rgba(255, 255, 255, 0.6) 0%,
+                    rgba(255, 245, 230, 0.5) 25%,
+                    rgba(230, 245, 255, 0.45) 50%,
+                    rgba(255, 240, 245, 0.4) 75%,
+                    rgba(245, 250, 255, 0.5) 100%);
+            backdrop-filter: blur(25px);
+            border: 1.5px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 80px rgba(255, 255, 255, 0.3),
+                inset 0 0 30px rgba(255, 255, 255, 0.2),
+                0 8px 25px rgba(0, 0, 0, 0.05);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        /* 글래스 오브 크기 조정 - 데스크톱 최적화 */
+        .orb-1 {
+            width: 250px;
+            /* 더 크게 */
+            height: 250px;
+            top: 8%;
+            left: 12%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 150px;
+            /* 더 크게 */
+            height: 150px;
+            top: 18%;
+            right: 18%;
+            animation-delay: 2s;
+        }
+
+        .orb-3 {
+            width: 180px;
+            /* 더 크게 */
+            height: 180px;
+            bottom: 22%;
+            left: 8%;
+            animation-delay: 4s;
+        }
+
+        .orb-4 {
+            width: 100px;
+            /* 더 크게 */
+            height: 100px;
+            bottom: 12%;
+            right: 22%;
+            animation-delay: 1s;
+        }
+
+        .orb-5 {
+            width: 130px;
+            /* 더 크게 */
+            height: 130px;
+            top: 45%;
+            right: 8%;
+            animation-delay: 3s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            33% {
+                transform: translateY(-20px) rotate(1deg);
+            }
+
+            66% {
+                transform: translateY(-10px) rotate(-1deg);
+            }
+        }
+
+        /* 로고 스타일 - 지속적이고 부드러운 띠용띠용 효과 */
+        .logo {
+            max-width: 1500px;
+            /* 1500px로 대폭 증가 */
+            width: 100%;
+            height: auto;
+            position: relative;
+            z-index: 10;
+            animation: fadeInUp 1s ease-out, gentleBounce 6s ease-in-out infinite;
+            filter: drop-shadow(0 3px 50px rgba(74, 85, 104, 0.15));
+            transition: all 0.3s ease;
+            margin: 0 auto -100px auto;
+            /* 간격 더 줄임 */
+        }
+
+        /* 부드럽고 지속적인 띠용띠용 효과 */
+        @keyframes gentleBounce {
+            0% {
+                transform: scale(1) rotate(0deg) translateY(0px);
+            }
+
+            16.66% {
+                transform: scale(1.008) rotate(0.2deg) translateY(-2px);
+            }
+
+            33.33% {
+                transform: scale(0.996) rotate(-0.15deg) translateY(1px);
+            }
+
+            50% {
+                transform: scale(1.005) rotate(0.1deg) translateY(-1px);
+            }
+
+            66.66% {
+                transform: scale(0.998) rotate(-0.08deg) translateY(0.5px);
+            }
+
+            83.33% {
+                transform: scale(1.003) rotate(0.05deg) translateY(-0.5px);
+            }
+
+            100% {
+                transform: scale(1) rotate(0deg) translateY(0px);
+            }
+        }
+
+        .logo:hover {
+            transform: scale(1.03);
+            /* 호버 효과 강화 */
+            filter: drop-shadow(0 5px 60px rgba(74, 85, 104, 0.2));
+        }
+
+        /* 버튼 컨테이너 - 버블 효과를 위한 래퍼 */
+        .button-container {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* 버튼 뒤 버블 효과 */
+        .button-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 150px;
+            background: linear-gradient(135deg,
+                    rgba(255, 255, 255, 0.4) 0%,
+                    rgba(200, 230, 255, 0.3) 50%,
+                    rgba(255, 248, 235, 0.4) 100%);
+            border-radius: 50%;
+            filter: blur(30px);
+            z-index: -1;
+            animation: bubbleFloat 8s ease-in-out infinite;
+        }
+
+        @keyframes bubbleFloat {
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.6;
+            }
+
+            50% {
+                transform: translate(-50%, -55%) scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        /* 버튼 스타일 - 사이즈 살짝 줄임 */
+        button {
+            padding: 25px 55px;
+            /* 25px 55px → 20px 45px */
+            font-size: 1.4em;
+            /* 1.4em → 1.2em */
+            background: rgba(255, 255, 255, 0.9);
+            color: #374151;
+            border: 2px solid rgba(200, 230, 255, 0.8);
+            border-radius: 30px;
+            /* 35px → 30px */
+            cursor: pointer;
+            font-family: 'LeeSeoyun', sans-serif;
+            font-weight: 500;
+            letter-spacing: 0.03em;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s ease;
+            box-shadow: 0 0 30px rgba(200, 230, 255, 0.4),
+                0 10px 35px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 2;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        /* 띠용띠용 글씨 효과 제거 */
+
+        button:hover {
+            transform: translateY(-4px);
+            /* 호버 효과 강화 */
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 0 40px rgba(200, 230, 255, 0.6),
+                /* 글로우 더 강하게 */
+                0 15px 45px rgba(0, 0, 0, 0.15);
+            border-color: rgba(200, 230, 255, 0.9);
+            scale: 1.02;
+            /* 살짝 커지는 효과 */
+        }
+
+        button:active {
+            transform: translateY(-1px);
+            box-shadow: 0 0 25px rgba(200, 230, 255, 0.4),
+                0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 데모를 위한 추가 스타일 */
+        .demo-info {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
+            padding: 15px 25px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 240, 180, 0.3);
+            color: #4a5568;
+            font-family: 'LeeSeoyun', sans-serif;
+            /* 이서윤체로 통일 */
+            font-size: 0.9em;
+            z-index: 15;
+            animation: fadeInLeft 1s ease-out 0.6s both;
+            font-weight: 300;
+        }
+
+        .demo-pages {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 15;
+            animation: fadeInUp 1s ease-out 0.9s both;
+        }
+
+        .page-preview {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 240, 180, 0.3);
+            color: #4a5568;
+            font-family: 'LeeSeoyun', sans-serif;
+            /* 이서윤체로 통일 */
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 300;
+        }
+
+        .page-preview:hover {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(255, 220, 150, 0.4);
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .home-container {
+                padding-bottom: 80px;
+                /* 모바일에서도 위로 올림 */
+            }
+
+            .logo {
+                max-width: 200px;
+                /* 모바일에서 적당한 크기 */
+                margin-bottom: 15px;
+            }
+
+            button {
+                padding: 16px 32px;
+                font-size: 1em;
+            }
+
+            .demo-info {
+                position: relative;
+                top: auto;
+                left: auto;
+                margin: 20px;
+                text-align: center;
+            }
+
+            .demo-pages {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                transform: none;
+                margin: 20px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .glass-orb {
+                opacity: 0.6;
+            }
+
+            .orb-1,
+            .orb-2,
+            .orb-3 {
+                width: 100px;
+                height: 100px;
+            }
+
+            .orb-4,
+            .orb-5 {
+                width: 60px;
+                height: 60px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .home-container {
+                padding-bottom: 60px;
+            }
+
+            .logo {
+                max-width: 150px;
+                /* 작은 모바일에서 적당한 크기 */
+                margin-bottom: 12px;
+            }
+
+            button {
+                padding: 14px 28px;
+                font-size: 0.95em;
+            }
+
+            .demo-pages {
+                gap: 10px;
+            }
+
+            .page-preview {
+                padding: 10px 18px;
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="home-container">
+        <!-- 3D 글래스 오브들 -->
+        <div class="glass-orb orb-1"></div>
+        <div class="glass-orb orb-2"></div>
+        <div class="glass-orb orb-3"></div>
+        <div class="glass-orb orb-4"></div>
+        <div class="glass-orb orb-5"></div>
+
+        <!-- 로고 -->
+        <img src="./img/MiniArca3.png" alt="MINIARCA" class="logo" />
+
+        <!-- 메인 버튼 (버블 효과와 함께) -->
+        <div class="button-container">
+            <button onclick="showAlert()">오늘 하루 기록하기</button>
+        </div>
+    </div>
+</body>
+
+</html>

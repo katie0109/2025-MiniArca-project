@@ -1,0 +1,675 @@
+.diary-frame-container::before {
+                width: 85vw;
+                height: 75vh;
+                max-width: 450px;
+                max-height: 600px;
+                border-width: 3px;
+            }
+            
+            .grid-layer {
+                bottom: 2%;
+                left: 3%;
+                width: 94%;
+                height: 32%;
+                padding: 5px;
+            }
+            
+            .grid-cell {
+                font-size: 32px;
+            }
+            
+            .date-overlay {
+                font-size: 28px;
+                top: 3%;
+                left: 5%;
+                width: 55%;
+                gap: 4%;
+            }
+            
+            .unity-image {
+                top: 10%;
+                height: 38%;
+                padding: 8px;
+            }<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>그림일기 결과</title>
+    <style>
+        /* 폰트 로드 */
+        @font-face {
+            font-family: 'SangSangShinb7';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_three@1.1/SangSangShinb7.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'NEXON Lv1 Gothic OTF';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/NEXON Lv1 Gothic OTF.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .all-result-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(135deg, #fef9e7 0%, #f0f8ff 30%, #fdf2f8 60%, #f0f9ff 100%);
+        }
+
+        /* 배경 글래스 오브들 - 원래대로 복원 */
+        .glass-orb {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg,
+                    rgba(255, 255, 255, 0.6) 0%,
+                    rgba(255, 245, 230, 0.5) 25%,
+                    rgba(230, 245, 255, 0.45) 50%,
+                    rgba(255, 240, 245, 0.4) 75%,
+                    rgba(245, 250, 255, 0.5) 100%);
+            backdrop-filter: blur(25px);
+            border: 1.5px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 80px rgba(255, 255, 255, 0.3),
+                inset 0 0 30px rgba(255, 255, 255, 0.2),
+                0 8px 25px rgba(0, 0, 0, 0.05);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 250px;
+            height: 250px;
+            top: 8%;
+            left: 12%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 150px;
+            height: 150px;
+            top: 18%;
+            right: 18%;
+            animation-delay: 2s;
+        }
+
+        .orb-3 {
+            width: 180px;
+            height: 180px;
+            bottom: 22%;
+            left: 8%;
+            animation-delay: 4s;
+        }
+
+        .orb-4 {
+            width: 100px;
+            height: 100px;
+            bottom: 12%;
+            right: 22%;
+            animation-delay: 1s;
+        }
+
+        .orb-5 {
+            width: 130px;
+            height: 130px;
+            top: 45%;
+            right: 8%;
+            animation-delay: 3s;
+        }
+
+        .diary-frame-container {
+            position: relative;
+            width: auto;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 5;
+        }
+
+        .diary-frame-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 800px;
+            background: #ffffff;
+            border-radius: 10px;
+            border: 4px solid #4a5c69;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+            z-index: 4;
+        }
+
+        .diary-frame {
+            height: 100vh;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 30px rgba(74, 85, 104, 0.1));
+            z-index: 5;
+        }
+
+        .grid-layer {
+            position: absolute;
+            bottom: 2.5%;
+            left: 3.5%;
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            grid-template-rows: repeat(6, 1fr);
+            width: 93%;
+            height: 35%;
+            padding: 8px;
+            box-sizing: border-box;
+            z-index: 6;
+            background: transparent;
+            border-radius: 5px;
+        }
+
+        .grid-cell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 50px;
+            font-family: 'SangSangShinb7', sans-serif;
+            color: #2d3748;
+            text-shadow: 0 1px 3px rgba(255, 255, 255, 0.5);
+            padding-top: 5px;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-8px) rotate(1deg);
+            }
+        }
+
+        .floating-emoji {
+            position: absolute;
+            z-index: 3;
+            opacity: 0.8;
+            animation: float 3s ease-in-out infinite;
+            transition: transform 0.3s ease;
+            filter: drop-shadow(2px 4px 8px rgba(0, 0, 0, 0.2)) 
+                    drop-shadow(0 0 15px rgba(255, 255, 255, 0.3));
+        }
+
+        .floating-emoji:hover {
+            transform: scale(1.2) rotate(5deg);
+            opacity: 1;
+        }
+
+        .unity-image {
+            position: absolute;
+            top: 11.5%;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 45%;
+            z-index: 6;
+            filter: drop-shadow(0 5px 15px rgba(74, 85, 104, 0.2));
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 12px;
+            padding: 15px;
+            backdrop-filter: blur(5px);
+        }
+
+        .date-overlay {
+            position: absolute;
+            top: 5%;
+            left: 7.5%;
+            display: flex;
+            gap: 7.5%;
+            font-family: 'SangSangShinb7', sans-serif;
+            font-size: 43px;
+            color: #2d3748;
+            text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8);
+            z-index: 7;
+            width: 45%;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 5px 10px;
+            border-radius: 8px;
+            backdrop-filter: blur(5px);
+        }
+
+        .date-cell {
+            flex: 1;
+            text-align: center;
+        }
+
+        .date-cell:nth-child(2),
+        .date-cell:nth-child(3),
+        .date-cell:nth-child(4) {
+            margin-left: 7px;
+        }
+
+        .email-send-container {
+            position: fixed;
+            top: 50%;
+            right: 30px;
+            transform: translateY(-50%);
+            z-index: 9999;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            padding: 24px;
+            border: 1px solid rgba(226, 232, 240, 0.6);
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+            text-align: center;
+            min-width: 300px;
+            max-width: 350px;
+            transition: all 0.3s ease;
+        }
+
+        .email-send-container:hover {
+            transform: translateY(-52%);
+            box-shadow: 0 16px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .email-send-container h3 {
+            font-family: 'NEXON Lv1 Gothic OTF', sans-serif;
+            color: #4b4b4b;
+            margin-bottom: 18px;
+            font-size: 18px;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .email-send-container h3::after {
+            content: '✉️';
+            position: absolute;
+            right: -5px;
+            top: -2px;
+            font-size: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-3px);
+            }
+            60% {
+                transform: translateY(-2px);
+            }
+        }
+
+        .email-send-form input {
+            padding: 14px 16px;
+            width: 100%;
+            font-size: 14px;
+            margin-bottom: 16px;
+            border-radius: 12px;
+            border: 2px solid rgba(226, 232, 240, 0.7);
+            background: rgba(255, 255, 255, 0.9);
+            font-family: 'NEXON Lv1 Gothic OTF', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .email-send-form input:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.05);
+            transform: translateY(-1px);
+        }
+
+        .email-send-form button {
+            padding: 14px 20px;
+            font-size: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            font-family: 'NEXON Lv1 Gothic OTF', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .email-send-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .email-send-form button:active {
+            transform: translateY(0);
+        }
+
+        .loading, .error {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'NEXON Lv1 Gothic OTF', sans-serif;
+            font-size: 18px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            z-index: 10000;
+        }
+
+        .error {
+            color: #dc3545;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .grid-layer {
+                bottom: 3%;
+                left: 3%;
+                width: 94%;
+                height: 35%;
+                padding: 5px;
+            }
+            
+            .grid-cell {
+                font-size: 35px;
+            }
+            
+            .date-overlay {
+                font-size: 32px;
+                top: 3%;
+                left: 5%;
+                width: 50%;
+                gap: 5%;
+            }
+            
+            .unity-image {
+                top: 9%;
+                height: 40%;
+            }
+            
+            .floating-emoji {
+                opacity: 0.7;
+            }
+            
+            .glass-orb {
+                opacity: 0.4;
+            }
+            
+            .grid-layer {
+                bottom: 3%;
+                left: 3%;
+                width: 94%;
+                height: 35%;
+                padding: 5px;
+            }
+            
+            .grid-cell {
+                font-size: 35px;
+            }
+            
+            .date-overlay {
+                font-size: 32px;
+                top: 3%;
+                left: 5%;
+                width: 50%;
+                gap: 5%;
+            }
+            
+            .unity-image {
+                top: 9%;
+                height: 40%;
+            }
+            
+            .floating-emoji {
+                opacity: 0.7;
+                font-size: 50px !important;
+            }
+            
+            .glass-orb {
+                opacity: 0.4;
+            }
+            
+            .orb-1, .orb-2, .orb-3 {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .orb-4, .orb-5 {
+                width: 45px;
+                height: 45px;
+            }
+
+            .email-send-container {
+                right: 15px;
+                top: 40%;
+                min-width: 260px;
+                padding: 20px;
+            }
+
+            .email-send-container h3 {
+                font-size: 16px;
+                margin-bottom: 14px;
+            }
+
+            .email-send-form input {
+                padding: 12px 14px;
+                font-size: 14px;
+                margin-bottom: 14px;
+            }
+
+            .email-send-form button {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="all-result-container">
+        <!-- 배경 글래스 오브들 -->
+        <div class="glass-orb orb-1"></div>
+        <div class="glass-orb orb-2"></div>
+        <div class="glass-orb orb-3"></div>
+        <div class="glass-orb orb-4"></div>
+        <div class="glass-orb orb-5"></div>
+
+        <!-- 로딩 메시지 -->
+        <div id="loading" class="loading">로딩 중...</div>
+        
+        <!-- 에러 메시지 -->
+        <div id="error" class="error" style="display: none;"></div>
+
+        <!-- 떠다니는 이모지들 -->
+        <div id="floating-emojis"></div>
+
+        <!-- 그림일기 영역 -->
+        <div class="diary-frame-container">
+            <!-- 다이어리 프레임 이미지 -->
+            <img src="./img/diary_frame.png" alt="그림일기 틀" class="diary-frame" />
+
+            <!-- 날짜 오버레이 -->
+            <div id="date-overlay" class="date-overlay" style="display: none;">
+                <span class="date-cell" id="year"></span>
+                <span class="date-cell" id="month"></span>
+                <span class="date-cell" id="day"></span>
+                <span class="date-cell" id="weekday"></span>
+            </div>
+
+            <!-- 유니티 이미지 -->
+            <img id="unity-image" src="" alt="유니티 캐릭터" class="unity-image" style="display: none;" />
+
+            <!-- 글자 그리드 -->
+            <div id="grid-layer" class="grid-layer" style="display: none;"></div>
+        </div>
+
+        <!-- 이메일 전송 폼 -->
+        <div class="email-send-container">
+            <h3>이메일로 결과 받기</h3>
+            <form id="email-form" class="email-send-form">
+                <input type="email" id="email-input" placeholder="example@email.com" required />
+                <button type="submit">전송</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 데모 데이터 (실제로는 서버에서 받아올 데이터)
+        const demoData = {
+            emojis: ['😊', '🌟', '❤️', '🎉', '🌈'],
+            summary: '오늘은 정말 즐거운 하루였어요! 친구들과 함께 놀이공원에 가서 롤러코스터를 타고 솜사탕도 먹었어요.',
+            timestamp: new Date().toISOString(),
+            analysisId: 'demo123'
+        };
+
+        // 떠다니는 이모지 위치 프리셋 - 일기 틀 주변으로 더 가깝게
+        const positionPresets = [
+            { top: '8%', left: '8%' },
+            { top: '12%', left: '85%' },
+            { top: '22%', left: '5%' },
+            { top: '28%', left: '88%' },
+            { top: '38%', left: '3%' },
+            { top: '48%', left: '90%' },
+            { top: '58%', left: '6%' },
+            { top: '68%', left: '87%' },
+            { top: '78%', left: '8%' },
+            { top: '85%', left: '85%' },
+            { top: '15%', left: '50%' },
+            { top: '25%', left: '20%' },
+            { top: '45%', left: '75%' },
+            { top: '65%', left: '25%' },
+            { top: '75%', left: '70%' },
+            { top: '35%', left: '15%' },
+            { top: '55%', left: '80%' },
+            { top: '18%', left: '70%' },
+            { top: '72%', left: '40%' },
+            { top: '42%', left: '60%' }
+        ];
+
+        // 날짜 포맷팅 함수
+        function formatDateParts(timestamp) {
+            const date = new Date(timestamp);
+            const kstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+            const year = kstDate.getFullYear();
+            const month = `${kstDate.getMonth() + 1}`.padStart(2, '0');
+            const day = `${kstDate.getDate()}`.padStart(2, '0');
+            const daysKor = ['일', '월', '화', '수', '목', '금', '토'];
+            const weekday = daysKor[kstDate.getDay()];
+            return { year, month, day, weekday };
+        }
+
+        // 이모지 생성 함수 - 개수 대폭 증가
+        function createFloatingEmojis(emojis) {
+            const container = document.getElementById('floating-emojis');
+            const repeatedEmojis = [];
+            
+            // 이모지를 4번 반복해서 더 많이 표시
+            for (let i = 0; i < 4; i++) {
+                repeatedEmojis.push(...emojis);
+            }
+
+            repeatedEmojis.forEach((emoji, index) => {
+                const emojiDiv = document.createElement('div');
+                emojiDiv.className = 'floating-emoji';
+                emojiDiv.textContent = emoji;
+                emojiDiv.style.fontSize = `${Math.floor(Math.random() * 20) + 70}px`;
+                
+                const pos = positionPresets[index % positionPresets.length];
+                emojiDiv.style.top = pos.top;
+                emojiDiv.style.left = pos.left;
+                emojiDiv.style.animationDelay = `${Math.random() * 4}s`;
+                
+                container.appendChild(emojiDiv);
+            });
+        }
+
+        // 그리드 생성 함수 - 타이핑 애니메이션 제대로 적용
+        function createGrid(summary) {
+            const gridLayer = document.getElementById('grid-layer');
+            const paddedSummary = summary.padEnd(60);
+            
+            gridLayer.innerHTML = ''; // 기존 내용 초기화
+            
+            for (let i = 0; i < 60; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'grid-cell';
+                cell.textContent = paddedSummary[i] || '';
+                cell.style.animationDelay = `${1 + (i * 0.05)}s`; // 1초 후부터 시작
+                gridLayer.appendChild(cell);
+            }
+        }
+
+        // 데이터 로드 및 표시
+        function loadAndDisplayData() {
+            setTimeout(() => {
+                try {
+                    const { emojis, summary, timestamp, analysisId } = demoData;
+
+                    // 로딩 숨기기
+                    document.getElementById('loading').style.display = 'none';
+
+                    // 떠다니는 이모지 생성
+                    createFloatingEmojis(emojis);
+
+                    // 날짜 표시
+                    const { year, month, day, weekday } = formatDateParts(timestamp);
+                    document.getElementById('year').textContent = year;
+                    document.getElementById('month').textContent = month;
+                    document.getElementById('day').textContent = day;
+                    document.getElementById('weekday').textContent = weekday;
+                    document.getElementById('date-overlay').style.display = 'flex';
+
+                    // 유니티 이미지 표시 (데모용 플레이스홀더)
+                    const unityImage = document.getElementById('unity-image');
+                    unityImage.src = `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iODAiIGZpbGw9IiNmZmM5NDciLz4KPGV5ZSBjeD0iODAiIGN5PSI4MCIgcng9IjEwIiByeT0iMTUiIGZpbGw9IiMzMzMiLz4KPGV5ZSBjeD0iMTIwIiBjeT0iODAiIHJ4PSIxMCIgcnk9IjE1IiBmaWxsPSIjMzMzIi8+CjxwYXRoIGQ9Ik04MCA4MFE5MCA2NSAxMDAgNjVRMTEwIDY1IDEyMCA4MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjY2IiBzdHJva2Utd2lkdGg9IjIiLz4KPGV5ZSBjeD0iMTAwIiBjeT0iMTIwIiByeD0iMjAiIHJ5PSIxMCIgZmlsbD0iIzMzMyIvPgo8L3N2Zz4K`;
+                    unityImage.style.display = 'block';
+
+                    // 그리드 생성
+                    createGrid(summary);
+                    document.getElementById('grid-layer').style.display = 'grid';
+
+                } catch (error) {
+                    document.getElementById('loading').style.display = 'none';
+                    const errorDiv = document.getElementById('error');
+                    errorDiv.textContent = `에러 발생: ${error.message}`;
+                    errorDiv.style.display = 'block';
+                }
+            }, 1000); // 1초 로딩 시뮬레이션
+        }
+
+        // 이메일 전송 함수
+        function handleEmailSubmit(e) {
+            e.preventDefault();
+            
+            const emailInput = document.getElementById('email-input');
+            const email = emailInput.value;
+
+            if (!email.includes('@')) {
+                alert("올바른 이메일을 입력해주세요.");
+                return;
+            }
+
+            // 실제로는 서버로 데이터를 전송
+            alert(`${email}로 결과가 전송되었습니다!`);
+            emailInput.value = '';
+        }
+
+        // 이벤트 리스너 등록
+        document.getElementById('email-form').addEventListener('submit', handleEmailSubmit);
+
+        // 페이지 로드 시 데이터 로드
+        window.addEventListener('load', loadAndDisplayData);
+    </script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+/* 페이지 버튼 스타일 */
+.page-buttons {
+    position: absolute;
+    bottom: 40px;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 70px;
+    pointer-events: auto;
+    z-index: 10;
+}
+
+.circle-button {
+    width: 75px;
+    height: 75px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(200, 230, 255, 0.8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    z-index: 10;
+    transition: all 0.4s ease;
+    box-shadow: 0 0 30px rgba(200, 230, 255, 0.4),
+        0 10px 35px rgba(0, 0, 0, 0.1);
+    margin-left: 20px;
+}
+
+.circle-button.right {
+    opacity: 1;
+}
+
+.circle-button:hover {
+    background: rgba(255, 255, 255, 0.95);
+    transform: translateY(-4px);
+    box-shadow: 0 0 40px rgba(200, 230, 255, 0.6),
+        0 15px 45px rgba(0, 0, 0, 0.15);
+    border-color: rgba(200, 230, 255, 0.9);
+    scale: 1.02;
+}
+
+.circle-button:active {
+    transform: translateY(-1px);
+    box-shadow: 0 0 25px rgba(200, 230, 255, 0.4),
+        0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.triangle {
+    width: 0;
+    height: 0;
+    border-style: solid;
+}
+
+.triangle.right {
+    border-width: 15px 0 15px 20px;
+    border-color: transparent transparent transparent #374151;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+
+    .page-buttons {
+        padding: 0 40px;
+    }
+
+    .circle-button {
+        width: 65px;
+        height: 65px;
+    }
+
+    .triangle.right {
+        border-width: 12px 0 12px 16px;
+    }
+
+
+}
+
+@media (max-width: 480px) {
+
+    .circle-button {
+        width: 55px;
+        height: 55px;
+    }
+
+    .triangle.right {
+        border-width: 10px 0 10px 14px;
+    }
+}

@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diary Result</title>
+    <style>
+        /* DiaryResult.css - 글래스모피즘 적용 */
+        /*
+@font-face {
+  font-family: 'CookieRun-Regular';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/CookieRun-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'GongGothicMedium';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicMedium.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+    font-family: 'NEXON Lv1 Gothic OTF';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/NEXON Lv1 Gothic OTF.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+*/
+
+        /* DiaryResult.css - 글래스모피즘 적용 */
+        /*
+@font-face {
+  font-family: 'CookieRun-Regular';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/CookieRun-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'GongGothicMedium';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicMedium.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+    font-family: 'NEXON Lv1 Gothic OTF';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/NEXON Lv1 Gothic OTF.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+*/
+
+        @font-face {
+            font-family: 'LeeSeoyun';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2202-2@1.0/LeeSeoyun.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .wordcloud-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            position: relative;
+            background: linear-gradient(135deg, #fef9e7 0%, #f0f8ff 30%, #fdf2f8 60%, #f0f9ff 100%);
+            overflow: hidden;
+        }
+
+        /* 배경 글래스 오브들 - 로고와 더 잘 어울리게 */
+        .glass-orb {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg,
+                    rgba(255, 255, 255, 0.6) 0%,
+                    rgba(255, 245, 230, 0.5) 25%,
+                    rgba(230, 245, 255, 0.45) 50%,
+                    rgba(255, 240, 245, 0.4) 75%,
+                    rgba(245, 250, 255, 0.5) 100%);
+            backdrop-filter: blur(25px);
+            border: 1.5px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 80px rgba(255, 255, 255, 0.3),
+                inset 0 0 30px rgba(255, 255, 255, 0.2),
+                0 8px 25px rgba(0, 0, 0, 0.05);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        /* 글래스 오브 크기 조정 - 데스크톱 최적화 */
+        .orb-1 {
+            width: 250px;
+            /* 더 크게 */
+            height: 250px;
+            top: 8%;
+            left: 12%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 150px;
+            /* 더 크게 */
+            height: 150px;
+            top: 18%;
+            right: 18%;
+            animation-delay: 2s;
+        }
+
+        .orb-3 {
+            width: 180px;
+            /* 더 크게 */
+            height: 180px;
+            bottom: 22%;
+            left: 8%;
+            animation-delay: 4s;
+        }
+
+        .orb-4 {
+            width: 100px;
+            /* 더 크게 */
+            height: 100px;
+            bottom: 12%;
+            right: 22%;
+            animation-delay: 1s;
+        }
+
+        .orb-5 {
+            width: 130px;
+            /* 더 크게 */
+            height: 130px;
+            top: 45%;
+            right: 8%;
+            animation-delay: 3s;
+        }
+
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-12px) rotate(1deg);
+            }
+        }
+
+        /* 새 버튼 스타일 */
+        .page-buttons {
+            position: absolute;
+            bottom: 40px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 70px;
+            pointer-events: auto;
+            z-index: 15;
+        }
+
+        .circle-button {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 240, 180, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .circle-button:hover {
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(74, 85, 104, 0.15);
+            border-color: rgba(255, 220, 150, 0.4);
+        }
+
+        .triangle {
+            width: 0;
+            height: 0;
+            border-style: solid;
+        }
+
+        .triangle.left {
+            border-width: 12px 16px 12px 0;
+            border-color: transparent #4a5568 transparent transparent;
+        }
+
+        .triangle.right {
+            border-width: 12px 0 12px 16px;
+            border-color: transparent transparent transparent #4a5568;
+        }
+
+        .floating-word {
+            font-family: 'CookieRun-Regular', sans-serif;
+            position: absolute;
+            opacity: 1;
+            animation: bubbleFade 3s ease-in-out infinite;
+            pointer-events: none;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 25px rgba(255, 255, 255, 0.4);
+            z-index: 5;
+        }
+
+        /* ☁️ 구름 텍스트 애니메이션 */
+        @keyframes bubbleFade {
+            0% {
+                opacity: 0;
+                transform: scale(0.2);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(0.6);
+            }
+        }
+
+        /* 🎯 스피너 컨테이너 - 완전 투명, 컨테이너 없음 */
+        .svg-spinner-wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            animation: spinnerBounce 3s ease-in-out infinite;
+        }
+
+        @keyframes spinnerBounce {
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1) rotate(0deg);
+            }
+
+            25% {
+                transform: translate(-50%, -50%) scale(1.05) rotate(1deg);
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(0.98) rotate(0deg);
+            }
+
+            75% {
+                transform: translate(-50%, -50%) scale(1.02) rotate(-1deg);
+            }
+        }
+
+        .svg-loader {
+            width: 300px;
+            height: 300px;
+            filter: drop-shadow(0 0 30px rgba(255, 105, 180, 0.6));
+            animation: loaderPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes loaderPulse {
+
+            0%,
+            100% {
+                filter: drop-shadow(0 0 30px rgba(255, 105, 180, 0.6));
+            }
+
+            50% {
+                filter: drop-shadow(0 0 50px rgba(255, 105, 180, 0.9));
+            }
+        }
+
+        /* 🌈 회전하는 멀티컬러 스피너 */
+        .path {
+            stroke: #FF69B4;
+            stroke-linecap: round;
+            stroke-width: 10;
+            animation:
+                spinnerRotate 2s linear infinite,
+                dash 2.5s ease-in-out infinite,
+                colorShift 4s ease-in-out infinite;
+            transform-origin: 50% 50%;
+        }
+
+        /* ✅ 스피너 회전 애니메이션 */
+        @keyframes spinnerRotate {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes colorShift {
+            0% {
+                stroke: #FFB7C5;
+                /* 파스텔 핑크 */
+                filter: drop-shadow(0 0 25px rgba(255, 183, 197, 0.6));
+            }
+
+            25% {
+                stroke: #B5E5FF;
+                /* 파스텔 블루 */
+                filter: drop-shadow(0 0 25px rgba(181, 229, 255, 0.6));
+            }
+
+            50% {
+                stroke: #C5F0C5;
+                /* 파스텔 그린 */
+                filter: drop-shadow(0 0 25px rgba(197, 240, 197, 0.6));
+            }
+
+            75% {
+                stroke: #FFEB9C;
+                /* 파스텔 옐로우 */
+                filter: drop-shadow(0 0 25px rgba(255, 235, 156, 0.6));
+            }
+
+            100% {
+                stroke: #E6C7FF;
+                /* 파스텔 퍼플 */
+                filter: drop-shadow(0 0 25px rgba(230, 199, 255, 0.6));
+            }
+        }
+
+        /* 🎨 그라디언트 정의 (SVG에서 사용) */
+        .svg-loader defs linearGradient {
+            --stop1: #FFB7B2;
+            --stop2: #FFDAC1;
+            --stop3: #E2F0CB;
+            --stop4: #B5EAD7;
+            --stop5: #C7CEEA;
+        }
+
+        .svg-spinner-text {
+            font-size: 8px;
+            pointer-events: none;
+            font-family: 'LeeSeoyun', sans-serif;
+            fill: #333;
+            font-weight: 700;
+            text-shadow:
+                0 0 15px rgba(255, 255, 255, 1),
+                0 0 25px rgba(255, 255, 255, 0.8),
+                2px 2px 4px rgba(0, 0, 0, 0.3);
+            /* 글씨는 움직이지 않도록 애니메이션 제거 */
+        }
+
+        /* ✅ 회전 애니메이션: circle만 */
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 🌟 더 역동적인 대시 효과 */
+        @keyframes dash {
+            0% {
+                stroke-dasharray: 5, 150;
+                stroke-dashoffset: 0;
+            }
+
+            25% {
+                stroke-dasharray: 50, 150;
+                stroke-dashoffset: -20;
+            }
+
+            50% {
+                stroke-dasharray: 120, 150;
+                stroke-dashoffset: -50;
+            }
+
+            75% {
+                stroke-dasharray: 80, 150;
+                stroke-dashoffset: -90;
+            }
+
+            100% {
+                stroke-dasharray: 5, 150;
+                stroke-dashoffset: -150;
+            }
+        }
+
+        /* 완료 상태 - 멈추고 파스텔 그린 */
+        .path.complete {
+            stroke: #A8E6A3;
+            /* 파스텔 그린 */
+            animation: none;
+            /* 회전 멈춤 */
+            stroke-dasharray: 126, 126;
+            /* 완전한 원 */
+            stroke-dashoffset: 0;
+            filter: drop-shadow(0 0 30px rgba(168, 230, 163, 0.8));
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .page-buttons {
+                padding: 0 40px;
+            }
+
+            .circle-button {
+                width: 50px;
+                height: 50px;
+            }
+
+            .triangle.left {
+                border-width: 10px 14px 10px 0;
+            }
+
+            .triangle.right {
+                border-width: 10px 0 10px 14px;
+            }
+
+            .svg-spinner-wrapper {
+                padding: 0;
+                border-radius: 0;
+            }
+
+            .svg-loader {
+                width: 220px;
+                height: 220px;
+            }
+
+            .svg-spinner-text {
+                font-size: 6px;
+            }
+
+            .floating-word {
+                font-size: 80% !important;
+            }
+
+            .glass-orb {
+                opacity: 0.5;
+            }
+
+            .orb-1,
+            .orb-2,
+            .orb-3 {
+                width: 80px;
+                height: 80px;
+            }
+
+            .orb-4 {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wordcloud-wrapper">
+        <!-- 3D 글래스 오브들 -->
+        <div class="glass-orb orb-1"></div>
+        <div class="glass-orb orb-2"></div>
+        <div class="glass-orb orb-3"></div>
+        <div class="glass-orb orb-4"></div>
+
+        <!-- 플로팅 워드들이 동적으로 생성됩니다 -->
+
+        <!-- 캐릭터 생성 메시지 -->
+        <div class="svg-spinner-wrapper">
+            <svg class="svg-loader" viewBox="0 0 50 50">
+                <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5" />
+                <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" class="svg-spinner-text">
+                    캐릭터 생성 중
+                </text>
+            </svg>
+        </div>
+
+        <div class="page-buttons">
+            <button class="circle-button left" onclick="goBack()">
+                <span class="triangle left"></span>
+            </button>
+            <button class="circle-button right" onclick="goNext()">
+                <span class="triangle right"></span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 샘플 분석 데이터 (실제로는 서버에서 받아올 데이터)
+        const analysisData = {
+            emotion_analysis: {
+                "주요 감정": "기쁨",
+                "감정 강도": 85,
+                "세부 감정": [
+                    { "감정": "행복", "강도": 75 },
+                    { "감정": "만족", "강도": 60 },
+                    { "감정": "즐거움", "강도": 70 }
+                ]
+            },
+            place_extraction: {
+                "장소": "카페"
+            },
+            object_keywords: {
+                "사물 키워드": ["커피", "책", "음악", "친구", "대화", "햇살"]
+            }
+        };
+
+        const analysisId = "sample123";
+        let isCharacterReady = false;
+
+        // 워드 데이터 생성
+        function generateWords() {
+            const wordsSet = new Set();
+            const words = [];
+
+            // 주요 감정
+            const mainEmotion = analysisData?.emotion_analysis?.["주요 감정"];
+            const mainEmotionStrength = analysisData?.emotion_analysis?.["감정 강도"];
+            if (mainEmotion && !wordsSet.has(mainEmotion)) {
+                words.push({ text: mainEmotion, value: mainEmotionStrength || 80 });
+                wordsSet.add(mainEmotion);
+            }
+
+            // 세부 감정
+            const detailEmotions = analysisData?.emotion_analysis?.["세부 감정"];
+            if (Array.isArray(detailEmotions)) {
+                const sortedDetail = [...detailEmotions].sort((a, b) => b.강도 - a.강도);
+                sortedDetail.slice(0, 3).forEach(item => {
+                    if (!wordsSet.has(item.감정)) {
+                        words.push({ text: item.감정, value: item.강도 });
+                        wordsSet.add(item.감정);
+                    }
+                });
+            }
+
+            // 장소
+            const place = analysisData?.place_extraction?.장소;
+            if (place && !wordsSet.has(place)) {
+                words.push({ text: place, value: 50 });
+                wordsSet.add(place);
+            }
+
+            // 사물 키워드
+            const objectKeywords = analysisData?.object_keywords?.["사물 키워드"];
+            if (Array.isArray(objectKeywords)) {
+                for (const keyword of objectKeywords) {
+                    if (!wordsSet.has(keyword)) {
+                        words.push({ text: keyword, value: 40 });
+                        wordsSet.add(keyword);
+                    }
+                    if (words.length >= 10) break;
+                }
+            }
+
+            return words;
+        }
+
+        // 배열 셔플 함수
+        function shuffle(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // 플로팅 워드 생성
+        function createFloatingWords() {
+            const words = generateWords();
+            const positionPresets = [
+                { top: '8%', left: '15%' },
+                { top: '20%', left: '70%' },
+                { top: '65%', left: '30%' },
+                { top: '75%', left: '75%' },
+                { top: '15%', left: '45%' },
+                { top: '40%', left: '80%' },
+                { top: '58%', left: '10%' },
+                { top: '10%', left: '55%' },
+                { top: '70%', left: '60%' },
+                { top: '25%', left: '30%' },
+            ];
+
+            const shuffledWords = shuffle(words).slice(0, positionPresets.length);
+            const colorPalette = ['#FF9AA2', '#FFB7B2', '#FFDAC1', '#E2F0CB', '#B5EAD7', '#C7CEEA', '#A0CED9', '#FFD3B6'];
+            const wrapper = document.querySelector('.wordcloud-wrapper');
+
+            shuffledWords.forEach((word, index) => {
+                const pos = positionPresets[index];
+                const fontSize = `${Math.floor(Math.random() * 20) + 30}px`;
+                const delay = Math.random() * 3;
+                const color = colorPalette[index % colorPalette.length];
+
+                const wordElement = document.createElement('div');
+                wordElement.className = 'floating-word';
+                wordElement.textContent = word.text;
+                wordElement.style.top = pos.top;
+                wordElement.style.left = pos.left;
+                wordElement.style.fontSize = fontSize;
+                wordElement.style.animationDelay = `${delay}s`;
+                wordElement.style.color = color;
+                wordElement.style.textShadow = `0 0 8px ${color}, 0 0 20px white`;
+
+                wrapper.appendChild(wordElement);
+            });
+        }
+
+        // Unity 이미지 생성 체크 (시뮬레이션)
+        function checkCharacterReady() {
+            // 실제로는 서버에 요청을 보내지만, 여기서는 3초 후에 완료되도록 시뮬레이션
+            setTimeout(() => {
+                isCharacterReady = true;
+                const spinnerText = document.querySelector('.svg-spinner-text');
+                const path = document.querySelector('.path');
+                spinnerText.textContent = '캐릭터 생성 완료';
+                path.classList.add('complete');
+            }, 3000);
+        }
+
+        // 버튼 이벤트 핸들러
+        function goBack() {
+            console.log('뒤로 가기');
+            // 실제로는 history.back() 또는 라우터 사용
+        }
+
+        function goNext() {
+            if (isCharacterReady) {
+                console.log('다음 페이지로 이동');
+                // 실제로는 라우터를 사용해서 다음 페이지로 이동
+            } else {
+                alert('캐릭터 생성이 완료될 때까지 기다려주세요.');
+            }
+        }
+
+        // 초기화
+        document.addEventListener('DOMContentLoaded', function () {
+            createFloatingWords();
+            checkCharacterReady();
+        });
+    </script>
+</body>
+
+</html>

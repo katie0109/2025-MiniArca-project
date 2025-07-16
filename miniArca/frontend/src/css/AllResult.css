@@ -1,0 +1,507 @@
+@font-face {
+  font-family: 'SangSangShinb7';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_three@1.1/SangSangShinb7.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+/* 전역 에러 메시지 */
+.global-error-message {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #fef2f2;
+  border: 1px solid #ef4444;
+  color: #dc2626;
+  padding: 12px 24px;
+  border-radius: 8px;
+  z-index: 100;
+  max-width: 90%;
+  text-align: center;
+}
+
+/* 이메일 전송 버튼 - 크기 확대 */
+.email-send-button {
+  position: fixed;
+  bottom: 15px;
+  right: 32px;
+  background: linear-gradient(to right, #e9c7c7, #c3e7b8);
+  color: rgb(80, 80, 80);
+  font-weight: bold;
+  padding: 18px 28px; /* 패딩 증가 */
+  border-radius: 50px;
+  border: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  font-size: 16px; /* 폰트 크기 증가 */
+  z-index: 50;
+  transition: all 0.3s ease;
+  outline: none;
+  backdrop-filter: none;
+}
+
+.email-send-container {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.email-send-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.email-send-button.disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.email-send-button.disabled:hover {
+  transform: scale(1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* 모달 오버레이 */
+.modal-overlay {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 60;
+  display: flex;
+  align-items: flex-end; /* 하단 정렬로 변경 */
+  justify-content: flex-end; /* 우측 정렬로 변경 */
+  padding: 0 32px 100px 0; /* 버튼 크기 증가에 맞춰 여백 조정 */
+}
+
+/* 모달 창 - 크기 확대 */
+.modal-content {
+  background-color: white;
+  border-radius: 16px;
+  padding: 20px; /* 패딩 증가 */
+  max-width: 500px; /* 너비 증가 */
+  width: auto;
+  min-width: 400px; /* 최소 너비 증가 */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  transform: scale(1);
+  transition: all 0.3s ease;
+  position: relative;
+  /* 버튼과 비슷한 위치에 표시되도록 조정 */
+}
+
+.modal-inner {
+  text-align: center;
+  width: 100%;
+  min-height: 320px; /* 높이 증가 */
+  padding: 20px 25px; /* 패딩 증가 */
+  word-break: keep-all;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px; /* 간격 증가 */
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.modal-title::after {
+  display: none !important;
+}
+
+/* 입력 박스와 버튼 컨테이너 너비 맞춤 */
+.modal-inner input,
+.modal-inner .button-container {
+  width: 100%;
+  max-width: 450px; /* 최대 너비 증가 */
+  margin: 0 auto;
+}
+
+.modal-title {
+  font-size: 22px; /* 폰트 크기 증가 */
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 10px; /* 여백 증가 */
+  white-space: nowrap;
+  overflow: visible;
+  width: max-content;
+}
+
+.modal-description {
+  color: #6b7280;
+  margin-bottom: 15px; /* 여백 증가 */
+  font-size: 15px; /* 폰트 크기 증가 */
+  white-space: nowrap;
+  overflow: visible;
+  width: max-content;
+}
+
+.success-message {
+  margin-bottom: 16px;
+  padding: 10px;
+  background-color: #dcfce7;
+  border: 1px solid #22c55e;
+  color: #15803d;
+  border-radius: 8px;
+  font-size: 13px; /* 폰트 크기 줄임 */
+  white-space: nowrap;
+  overflow: visible;
+  width: max-content;
+  margin: 0 auto 16px auto;
+}
+
+.error-message {
+  margin-bottom: 16px;
+  padding: 10px;
+  background-color: #fef2f2;
+  border: 1px solid #ef4444;
+  color: #dc2626;
+  border-radius: 8px;
+  font-size: 13px; /* 폰트 크기 줄임 */
+}
+
+/* 폼 컨테이너 */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* 간격 줄임 */
+  margin-top: 8px;
+}
+
+/* 이메일 입력 필드 */
+.email-input {
+  width: 100%;
+  padding: 12px 16px; /* 패딩 증가 */
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 15px; /* 폰트 크기 증가 */
+  outline: none;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.email-input:focus {
+  border-color: #3b82f6;
+}
+
+/* 버튼 그룹 */
+.button-group {
+  display: flex;
+  gap: 12px; /* 간격 줄임 */
+}
+
+/* 전송 버튼 */
+.send-button {
+  flex: 1;
+  background: linear-gradient(to right, #bbcfe7, #ebf1ba);
+  color: rgb(82, 82, 82);
+  font-weight: bold;
+  padding: 12px 22px; /* 패딩 증가 */
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px; /* 폰트 크기 증가 */
+  transition: all 0.2s ease;
+}
+
+.send-button:hover {
+  transform: scale(1.02);
+}
+
+/* 취소 버튼 */
+.cancel-button {
+  flex: 1;
+  background: linear-gradient(to right, #ebf1ba, #bbcfe7);
+  color: rgb(82, 82, 82);
+  font-weight: bold;
+  padding: 12px 22px; /* 패딩 증가 */
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px; /* 폰트 크기 증가 */
+  transition: background-color 0.2s ease;
+}
+
+.cancel-button:hover {
+  background-color: #d1d5db;
+}
+
+/* 로딩 컨테이너 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 로딩 스피너 */
+.loading-spinner {
+  width: 35px; /* 크기 줄임 */
+  height: 35px;
+  border: 3px solid #f3f4f6;
+  border-top: 3px solid #9fb9e4;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  color: #6b7280;
+  margin: 0;
+  font-size: 13px; /* 폰트 크기 줄임 */
+}
+
+/* 애니메이션 */
+@keyframes spin {
+  0% { 
+    transform: rotate(0deg); 
+  }
+  100% { 
+    transform: rotate(360deg); 
+  }
+}
+
+/* 전체 컨테이너 */
+.diary-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fef9e7 0%, #f0f8ff 30%, #fdf2f8 60%, #f0f9ff 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* 제목 스타일 */
+.title {
+  margin-bottom: 2rem;
+  text-align: center;
+  color: white;
+  text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.title h1, .title h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.025em;
+}
+
+/* 다이어리 북 스타일 */
+.diary-book {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 95vw;
+  max-width: 1500px;
+  aspect-ratio: 2 / 1.4;
+  margin: 0 auto;
+  overflow: hidden;
+  position: relative;
+}
+
+.diary-background-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* 왼쪽 페이지 */
+.diary-left-page {
+  grid-column: 1 / 2;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 0.714;
+  overflow: hidden;
+}
+
+/* 프레임 */
+.diary-frame {
+  position: absolute;
+  top: 2%;
+  left: 2%;
+  width: 95%;
+  height: 95%;
+  object-fit: contain;
+  z-index: 1;
+}
+
+/* 날짜 - 반응형 개선 */
+.date-overlay {
+  position: absolute;
+  top: 7%;
+  left: 30%;
+  transform: translateX(-50%);
+  width: 40%;
+  display: flex;
+  justify-content: space-between;
+  z-index: 5;
+  font-size: clamp(18px, 2.6vw, 40px);
+  font-family: 'SangSangShinb7', sans-serif;
+}
+
+.date-cell {
+  width: auto;
+  text-align: center;
+  font-weight: 590;
+}
+
+/* Unity 비디오 */
+.unity-video {
+  position: absolute;
+  top: 13%;
+  left: 49.5%;
+  transform: translateX(-50%);
+  height: auto;
+  width: auto;
+  max-width: 80%;
+  max-height: 45%;
+  object-fit: contain;
+  z-index: 4;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* 요약 텍스트 - 반응형 개선 */
+.grid-layer {
+  position: absolute;
+  top: 56%;         /* 기존 bottom → top으로 전환해서 아래쪽으로 이동 */
+  left: 50%;        /* 오른쪽으로 이동 */
+  transform: translateX(-50%);
+  width: 80%;
+  height: 43%;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  row-gap: 4px;
+  font-family: 'SangSangShinb7', sans-serif;
+  z-index: 4;
+}
+
+.grid-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: clamp(20px, 2.8vw, 50px);
+  font-weight: 590;
+  color: #444;
+}
+
+/* 이모지 스티커 */
+.emoji-sticker {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  z-index: 6;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* 오른쪽 페이지 */
+.diary-right-page {
+  grid-column: 2 / 3;
+  height: 100%;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border-radius: 1rem;
+  overflow: hidden;
+  animation: pageAppear 0.8s ease-out;
+  position: relative;
+  z-index: 10;
+  width: 85%;          /* 그대로 두세요 */
+  padding: 0.5rem;     /* 그대로 두세요 */
+  transform: scale(0.95, 0.9) translateX(-2%);  /* scale 값만 조정 */
+  transform-origin: center;
+}
+
+
+/* 로딩 플레이스홀더 */
+.loading-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #e5e7eb, #f3f4f6);
+  border-radius: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+  gap: 0.5rem;
+}
+
+.loading-placeholder small {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #9ca3af;
+}
+
+/* 반응형 */
+@media (max-width: 1200px) {
+  .diary-container {
+    padding: 1rem;
+  }
+  .diary-right-page {
+    padding: 1.5rem;
+  }
+  .title h1, .title h2 {
+    font-size: 2rem;
+  }
+  .title p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .diary-book {
+    grid-template-columns: 1fr;
+    aspect-ratio: unset;
+  }
+  .diary-left-page, .diary-right-page {
+    grid-column: 1 / -1;
+    margin-top: 1rem;
+  }
+  .date-overlay {
+    font-size: clamp(16px, 4vw, 26px);
+    width: 80%;
+    top: 6%;
+  }
+  .grid-layer {
+    width: 95%;
+    height: 45%;
+    bottom: 4%;
+  }
+}
+
+@media (max-width: 480px) {
+  .title h1, .title h2 {
+    font-size: 1.5rem;
+  }
+  .title p {
+    font-size: 0.9rem;
+  }
+  .date-overlay {
+    font-size: clamp(12px, 5vw, 18px);
+    width: 95%;
+    top: 5%;
+  }
+  .grid-layer {
+    width: 99%;
+    height: 50%;
+    bottom: 2%;
+  }
+}
