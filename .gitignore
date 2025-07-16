@@ -28,6 +28,8 @@ sysinfo.txt
 *.so
 *.exe
 miniArca/frontend/public/emojis/emotion.zip
+# Exclude all .dylib files in unity_project/Library/PackageCache and subfolders
+unity_project/Library/PackageCache/**/*.dylib
 # Node.js
 node_modules/
 dist/
