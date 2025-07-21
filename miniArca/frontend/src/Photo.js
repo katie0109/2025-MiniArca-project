@@ -126,6 +126,12 @@ const Photo = () => {
         setMessage("뒷면 촬영까지 5초...");
         startCountdown();
       } else {
+
+        // 뒷면 업로드 후 분석 시작 API 호출
+        await axios.post('http://localhost:8000/analyzePhoto',
+          new URLSearchParams({ analysis_id: analysisId })
+        );
+        
         localStorage.setItem("analysis_id", analysisId);
         navigate("/diary-guide", { state: { analysisId } });
       }
