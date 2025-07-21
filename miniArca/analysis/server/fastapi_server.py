@@ -19,6 +19,7 @@ from dotenv import load_dotenv
 from model import emoji_select
 import traceback
 from model.analyze import analyze_combined_images
+from model.ilgibunseog import recommend_song_by_emotion, emotion_insight, recommend_activity_by_emotion
 
 import smtplib
 from email.message import EmailMessage
@@ -70,7 +71,7 @@ async def upload_photo_part(
         if part not in ('f', 'b'):
             raise HTTPException(status_code=400, detail="part는 'f' 또는 'b' 여야 합니다.")
 
-        user_directory = os.path.join(BASE_DIR, "miniArca", "analysis", "model", "Pictures", analysis_id)
+        user_directory = os.path.join(BASE_DIR,"analysis", "model", "Pictures", analysis_id)
         os.makedirs(user_directory, exist_ok=True)
 
         filename = f"{analysis_id}_{part}.jpg"
@@ -89,7 +90,7 @@ async def upload_photo_part(
 @app.post("/analyzePhoto")
 async def analyze_photo(analysis_id: str = Form(...)):
     try:
-        user_directory = os.path.join(BASE_DIR, "miniArca", "analysis", "model", "Pictures", analysis_id)
+        user_directory = os.path.join(BASE_DIR,"analysis", "model", "Pictures", analysis_id)
         front_path = os.path.join(user_directory, f"{analysis_id}_f.jpg")
         back_path = os.path.join(user_directory, f"{analysis_id}_b.jpg")
 
@@ -117,6 +118,8 @@ async def analyze_photo(analysis_id: str = Form(...)):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"사진 분석 중 오류 발생: {str(e)}")
 
+
+# ...existing code...
 @app.post("/analyzeDiary")
 async def analyze_diary(entry: DiaryEntry):
     try:
@@ -153,6 +156,20 @@ async def analyze_diary(entry: DiaryEntry):
         summary_text = summary_result.get("요약", "")
         print(f"[DEBUG] Summary result: {summary_text}")
 
+        # --- 추가 분석: 노래 추천, 감정 인사이트, 활동 추천 ---
+        print("[DEBUG] Running recommend_song_by_emotion...")
+        song_recommend = recommend_song_by_emotion(content)
+        print(f"[DEBUG] Song recommend result: {song_recommend}")
+
+        print("[DEBUG] Running emotion_insight...")
+        emotion_insight_result = emotion_insight(content)
+        print(f"[DEBUG] Emotion insight result: {emotion_insight_result}")
+
+        print("[DEBUG] Running recommend_activity_by_emotion...")
+        activity_recommend = recommend_activity_by_emotion(content)
+        print(f"[DEBUG] Activity recommend result: {activity_recommend}")
+        # ---
+
         cached_analysis_results["content"] = content
         cached_analysis_results["emotion_analysis"] = emotion_analysis
 
@@ -164,6 +181,9 @@ async def analyze_diary(entry: DiaryEntry):
                 "final_emotions": final_emotions,
                 "place_extraction": place_extraction,
                 "object_keywords": object_keywords,
+                "song_recommend": song_recommend,
+                "emotion_insight": emotion_insight_result,
+                "activity_recommend": activity_recommend,
                 "timestamp": datetime.now()
             }
         }
@@ -199,7 +219,10 @@ async def analyze_diary(entry: DiaryEntry):
             "place_extraction": place_extraction,
             "object_keywords": object_keywords,
             "background_image_path": image_path,
-            "emojis": emojis
+            "emojis": emojis,
+            "song_recommend": song_recommend,
+            "emotion_insight": emotion_insight_result,
+            "activity_recommend": activity_recommend
         }
 
     except ValueError as ve:
