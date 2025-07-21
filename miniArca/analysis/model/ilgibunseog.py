@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -228,7 +229,76 @@ def analyze_text(text):
         "summary": summary_result
     }
 
-    print(json.dumps(result, ensure_ascii=False, indent=4))
+
+def recommend_song_by_emotion(text):
+    """
+    일기 감정에 따라 노래를 추천하는 함수
+    """
+    cached_response = get_cached_response(text, "_song_recommend")
+    if cached_response:
+        return cached_response
+
+    instructions = """
+    주어진 일기(한국어 텍스트)의 감정에 가장 잘 어울리는 노래를 3곡 추천해주세요. 각 노래는 제목과 가수명을 모두 포함하고, 각각의 추천 이유도 한 문장으로 설명해주세요. 아래와 같은 JSON 형식으로 응답하세요:
+    {
+        "노래 추천": [
+            {"노래": "노래 제목 - 가수명", "추천 이유": "한 문장 설명"},
+            {"노래": "노래 제목 - 가수명", "추천 이유": "한 문장 설명"},
+            {"노래": "노래 제목 - 가수명", "추천 이유": "한 문장 설명"}
+        ]
+    }
+    """
+    prompt = f"텍스트: {text}\n추천 결과:"
+    full_prompt = f"{instructions}\n{prompt}"
+    response = call_gemini_model(full_prompt)
+    return cache_response(text, "_song_recommend", response)
+
+def emotion_insight(text):
+    """
+    감정분석 인사이트 제공 함수
+    """
+    cached_response = get_cached_response(text, "_emotion_insight")
+    if cached_response:
+        return cached_response
+
+    instructions = """
+    아래는 감정 분석 인사이트 예시입니다. 예시처럼 오늘 일기의 주요 감정(이름, 강도), 감정에 대한 해석, 긍정적 단어 사용 등 구체적이고 분석적인 인사이트를 3~5문장으로 작성해주세요.  반드시 아래 JSON 형식으로만 응답하세요.
+
+    예시:
+    {
+        "인사이트": "감정 분석 인사이트\n오늘 작성한 일기에서는 행복(75%)과 놀람(45%)이 주요 감정으로 나타났습니다. 이는 새로운 경험이나 예상치 못한 긍정적인 상황에 대한 반응으로 보입니다.\n\n당신의 글에서는 자연과의 교감을 통한 평온함과 만족감이 느껴집니다. 특히 \"아름다운\", \"편안한\", \"즐거운\"과 같은 단어 사용이 긍정적인 감정 상태를 반영합니다."
+    }
+
+    실제 분석 결과도 위 예시처럼 구체적이고 분석적으로 작성하되, 과거와의 비교는 하지 마세요.
+    """
+    prompt = f"텍스트: {text}\n인사이트:"
+    full_prompt = f"{instructions}\n{prompt}"
+    response = call_gemini_model(full_prompt)
+    return cache_response(text, "_emotion_insight", response)
+
+def recommend_activity_by_emotion(text):
+    """
+    감정에 맞는 맞춤 활동 추천 함수
+    """
+    cached_response = get_cached_response(text, "_activity_recommend")
+    if cached_response:
+        return cached_response
+
+    instructions = """
+    주어진 일기(한국어 텍스트)의 감정에 따라, 사용자의 기분을 개선하거나 감정을 잘 다룰 수 있도록 도와주는 맞춤 활동을 3가지 추천해주세요. 각 활동은 활동명과 추천 이유를 모두 포함하고, 각각의 추천 이유는 한 문장으로 설명해주세요. 아래와 같은 JSON 형식으로 응답하세요:
+    {
+        "활동 추천": [
+            {"활동": "추천 활동1", "추천 이유": "한 문장 설명"},
+            {"활동": "추천 활동2", "추천 이유": "한 문장 설명"},
+            {"활동": "추천 활동3", "추천 이유": "한 문장 설명"}
+        ]
+    }
+    """
+    prompt = f"텍스트: {text}\n추천 결과:"
+    full_prompt = f"{instructions}\n{prompt}"
+    response = call_gemini_model(full_prompt)
+    return cache_response(text, "_activity_recommend", response)
+
 
 
 
