@@ -33,9 +33,6 @@ function Diary() {
     });
 
     try {
-      await axios.post('http://localhost:8000/analyzePhoto',
-        new URLSearchParams({ analysis_id: analysisId })
-      );
 
       await axios.post('http://localhost:8000/analyzeDiary', {
         content: diaryText,
