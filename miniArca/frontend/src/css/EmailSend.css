@@ -1,11 +1,4 @@
 /* EmailSend.css */
-
-/* 1. body 배경 투명 또는 원하는 색상으로 */
-body {
-  background: transparent !important;
-}
-
-
 /* 전역 에러 메시지 */
 .global-error-message {
   position: fixed;

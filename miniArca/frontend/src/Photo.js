@@ -155,12 +155,6 @@ const Photo = () => {
 
   return (
     <div className="photo-container">
-      <div className="glass-orb orb-1"></div>
-      <div className="glass-orb orb-2"></div>
-      <div className="glass-orb orb-3"></div>
-      <div className="glass-orb orb-4"></div>
-      <div className="glass-orb orb-5"></div>
-
       {!isCaptured && (
         <div className="left-info">
           <div className="countdown-info-card">

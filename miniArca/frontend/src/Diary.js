@@ -51,23 +51,20 @@ function Diary() {
 
   return (
     <div className="diary-container">
-      {/* orb 구슬 */}
-      <div className="glass-orb orb-1"></div>
-      <div className="glass-orb orb-2"></div>
-      <div className="glass-orb orb-3"></div>
-      <div className="glass-orb orb-4"></div>
-      <div className="glass-orb orb-5"></div>
-
-      {/* 텍스트 입력 */}
       <textarea
         className="diary-textarea"
-        placeholder="장소, 사물, 감정의 키워드를 넣어 일기를 3~5줄 정도 작성해주세요."
+        placeholder="장소, 사물, 감정의 키워드를 넣어 3~5줄의 일기를 작성해주세요."
         value={diaryText}
         onChange={(e) => setDiaryText(e.target.value)}
       />
       <button className="diary-button" onClick={analyzeDiary}>
         작성 완료
       </button>
+      <div className="page-buttons">
+          <button className="circle-button left" onClick={() => navigate("/diary-guide")}>
+              <span className="triangle left"></span>
+          </button>
+      </div>
     </div>
   );
 }
