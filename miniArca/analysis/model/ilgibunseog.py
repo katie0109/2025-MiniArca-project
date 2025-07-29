@@ -27,10 +27,10 @@ if not GOOGLE_API_KEY:
 
 genai.configure(api_key=GOOGLE_API_KEY)
 
-model = genai.GenerativeModel('gemini-1.5-flash')
+model = genai.GenerativeModel('gemini-2.0-flash')
 
 # 기본 재시도 설정
-MAX_RETRIES = 10
+MAX_RETRIES = 2
 RETRY_DELAY = 1  # 초 단위 지연 시간
 
 # ---------------------

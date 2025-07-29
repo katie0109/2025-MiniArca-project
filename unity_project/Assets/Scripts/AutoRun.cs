@@ -35,58 +35,58 @@ public class AutoRun : MonoBehaviour
         clothingActivator.OnStartRecording += StartRecording;
         clothingActivator.OnStopRecording += StopRecording;
 
-        StartCoroutine(PollForAnalysisId());
+       // StartCoroutine(PollForAnalysisId());  풀링 방식
     }
 
-    IEnumerator PollForAnalysisId()
-    {
-        while (true)
-        {
-            if (!isProcessing)
-            {
-                UnityWebRequest request = UnityWebRequest.Get(nodeUrl);
-                yield return request.SendWebRequest();
+    //IEnumerator PollForAnalysisId()
+    //{
+    //    while (true)
+    //    {
+    //        if (!isProcessing)
+    //        {
+    //            UnityWebRequest request = UnityWebRequest.Get(nodeUrl);
+    //            yield return request.SendWebRequest();
 
-                if (request.result == UnityWebRequest.Result.Success)
-                {
-                    string json = request.downloadHandler.text;
-                    AnalysisIdWrapper result = JsonUtility.FromJson<AnalysisIdWrapper>(json);
+    //            if (request.result == UnityWebRequest.Result.Success)
+    //            {
+    //                string json = request.downloadHandler.text;
+    //                AnalysisIdWrapper result = JsonUtility.FromJson<AnalysisIdWrapper>(json);
 
-                    if (!string.IsNullOrEmpty(result.analysis_id) && result.analysis_id != lastProcessedId)
-                    {
-                        if (result.analysis_id == lastProcessedId)
-                        {
-                            Debug.Log("이미 처리한 분석 ID → 무시하고 30초 후 재시도");
-                        }
-                        else
-                        {
-                            Debug.Log("새로운 분석 ID 감지됨: " + result.analysis_id);
-                            isProcessing = true;
-                            lastProcessedId = result.analysis_id;
+    //                if (!string.IsNullOrEmpty(result.analysis_id) && result.analysis_id != lastProcessedId)
+    //                {
+    //                    if (result.analysis_id == lastProcessedId)
+    //                    {
+    //                        Debug.Log("이미 처리한 분석 ID → 무시하고 30초 후 재시도");
+    //                    }
+    //                    else
+    //                    {
+    //                        Debug.Log("새로운 분석 ID 감지됨: " + result.analysis_id);
+    //                        isProcessing = true;
+    //                        lastProcessedId = result.analysis_id;
 
-                            yield return StartCoroutine(HandleAnalysisId(result.analysis_id));
+    //                        yield return StartCoroutine(HandleAnalysisId(result.analysis_id));
 
-                            isProcessing = false;
-                        }
-                    }
-                    else
-                    {
-                        Debug.Log("분석 ID 없음");
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning("분석 ID 요청 실패: " + request.error);
-                }
-            }
-            else
-            {
-                Debug.Log("이전 ID 처리 중, 대기 중...");
-            }
+    //                        isProcessing = false;
+    //                    }
+    //                }
+    //                else
+    //                {
+    //                    Debug.Log("분석 ID 없음");
+    //                }
+    //            }
+    //            else
+    //            {
+    //                Debug.LogWarning("분석 ID 요청 실패: " + request.error);
+    //            }
+    //        }
+    //        else
+    //        {
+    //            Debug.Log("이전 ID 처리 중, 대기 중...");
+    //        }
 
-            yield return new WaitForSeconds(30f);
-        }
-    }
+    //        yield return new WaitForSeconds(30f);
+    //    }
+    //}
 
     IEnumerator GenerateStlFile(string analysisId)
     {
@@ -127,7 +127,7 @@ public class AutoRun : MonoBehaviour
         }
     }
 
-    IEnumerator HandleAnalysisId(string id)
+    public IEnumerator HandleAnalysisId(string id)
     {
         analysisId = id;
 
@@ -153,7 +153,7 @@ public class AutoRun : MonoBehaviour
 
     void StartRecording()
     {
-        folderPath = @"C:\Users\DS\miniArca\unityimg";
+        folderPath = Path.Combine(Directory.GetParent(Directory.GetParent(Application.dataPath).FullName).FullName, "miniArca", "unityimg");
 
         if (!Directory.Exists(folderPath))
         {

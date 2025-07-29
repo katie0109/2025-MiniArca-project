@@ -20,7 +20,7 @@ from model import emoji_select
 import traceback
 from model.analyze import analyze_combined_images
 from model.ilgibunseog import recommend_song_by_emotion, emotion_insight, recommend_activity_by_emotion
-
+import httpx
 import smtplib
 from email.message import EmailMessage
 import mimetypes                                       
@@ -192,6 +192,16 @@ async def analyze_diary(entry: DiaryEntry):
         await app.database.diary_entries.update_one({"_id": analysis_id}, update_data)
         print("[DEBUG] Database update completed.")
 
+         # Unity에 POST 요청 보내기 (알림)
+        UNITY_SERVER_URL = "http://localhost:8081/notify/"
+        async with httpx.AsyncClient() as client:
+            try:
+                response = await client.post(UNITY_SERVER_URL, json={"analysis_id": analysis_id})
+                response.raise_for_status()
+                print("[DEBUG] Unity 알림 전송 성공")
+            except Exception as e:
+                print(f"[WARN] Unity 알림 실패: {e}")
+
         location = place_extraction.get("장소")
         image_path = None
         if location:
@@ -281,6 +291,33 @@ async def get_background(doc_id: str):
     except Exception as e:
         print(f"[오류] background 요청 실패: {str(e)}")
         raise HTTPException(status_code=500, detail="서버 내부 오류 발생.")
+
+
+# # notify_unity.py 유니티에 요청 보내기 
+# from fastapi import FastAPI
+# import motor.motor_asyncio
+# import httpx
+
+# app = FastAPI()
+# mongo = motor.motor_asyncio.AsyncIOMotorClient("mongodb://localhost:27017")
+# db = mongo["your_db"]
+# collection = db["your_collection"]
+
+# UNITY_SERVER_URL = "http://localhost:8081/notify"  # 유니티 HTTP 서버 주소
+
+# @app.on_event("startup")
+# async def watch_mongodb():
+#     print("🚀 MongoDB 감시 시작!")
+#     async with collection.watch() as stream:
+#         async for change in stream:
+#             if change["operationType"] == "insert":
+#                 analysis_id = change["fullDocument"].get("analysis_id")
+#                 print(f"✅ 새 데이터: {analysis_id}")
+
+#                 # 유니티로 POST 요청 보내기
+#                 async with httpx.AsyncClient() as client:
+#                     await client.post(UNITY_SERVER_URL, json={"analysis_id": analysis_id})
+
 
 #유니티가 해당 id의 데이터를 조회하는 api  
 @app.get("/entry/{analysis_id}")
