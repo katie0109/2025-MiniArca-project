@@ -5,11 +5,32 @@ const multer = require('multer');
 const FormData = require('form-data');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
 const app = express();
 const port = 5000;
 
 // Load environment variables from .env file
 dotenv.config();
+
+// Swagger 설정
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'MiniArca Node.js API',
+      version: '1.0.0',
+      description: 'API documentation for MiniArca Node.js server',
+    },
+    servers: [
+      { url: 'http://localhost:5000' }
+    ],
+  },
+  apis: ['./server.js'], // 또는 API가 정의된 파일 경로
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // MongoDB 연결
 const mongoUrl = process.env.MONGODB_URL;
@@ -47,6 +68,26 @@ app.use(express.json());
 const upload = multer({ storage: multer.memoryStorage() });
 
 // FastAPI로 일기 분석 전달 (기존 로직 유지)
+/**
+ * @swagger
+ * /analyzeDiary:
+ *   post:
+ *     summary: Analyze diary content via FastAPI
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               content:
+ *                 type: string
+ *               analysis_id:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Analysis result
+ */
 app.post('/analyzeDiary', async (req, res) => {
   try {
     const { content, analysis_id } = req.body;
@@ -61,6 +102,25 @@ app.post('/analyzeDiary', async (req, res) => {
 });
 
 // FastAPI로 사진 분석 전달 (기존 로직 유지)
+/**
+ * @swagger
+ * /analyzePhoto:
+ *   post:
+ *     summary: Analyze photo via FastAPI
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Photo analysis result
+ */
 app.post('/analyzePhoto', upload.single('file'), async (req, res) => {
   try {
     const formData = new FormData();
@@ -81,6 +141,22 @@ app.post('/analyzePhoto', upload.single('file'), async (req, res) => {
 });
 
 // MongoDB에서 이모지, 요약, 타임스탬프, 감정 분석 등 가져오기
+/**
+ * @swagger
+ * /getDiaryData:
+ *   get:
+ *     summary: Get diary data by analysis_id
+ *     parameters:
+ *       - in: query
+ *         name: analysis_id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The analysis ID
+ *     responses:
+ *       200:
+ *         description: Diary data
+ */
 app.get('/getDiaryData', async (req, res) => {
   try {
     const { analysis_id } = req.query;
@@ -109,6 +185,24 @@ app.get('/getDiaryData', async (req, res) => {
 });
 
 //사용자 id를 주고 받는 엔드포인트
+/**
+ * @swagger
+ * /store-analysis-id:
+ *   post:
+ *     summary: Store the latest analysis ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               analysis_id:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: ID 저장 완료
+ */
 let latestAnalysisId = null;
 
 app.post('/store-analysis-id', (req, res) => {
@@ -118,6 +212,15 @@ app.post('/store-analysis-id', (req, res) => {
 });
 
 app.get('/get-analysis-id', (req, res) => {
+/**
+ * @swagger
+ * /get-analysis-id:
+ *   get:
+ *     summary: Get the latest analysis ID
+ *     responses:
+ *       200:
+ *         description: Latest analysis ID
+ */
   if (!latestAnalysisId) {
     return res.status(404).json({ error: "아직 분석된 ID 없음" });
   }
@@ -126,6 +229,15 @@ app.get('/get-analysis-id', (req, res) => {
 
 
 // 기존 엔트리 조회 (기존 로직 유지)
+/**
+ * @swagger
+ * /entries:
+ *   get:
+ *     summary: Get all diary entries
+ *     responses:
+ *       200:
+ *         description: List of diary entries
+ */
 app.get('/entries', async (req, res) => {
   try {
     const response = await axios.get('http://localhost:8000/entries');
