@@ -1,13 +1,4 @@
-/* EmailSend 관련 스타일들 */
-
-/* 1. body 배경 투명 또는 원하는 색상으로 */
-body {
-  background: transparent !important;
-}
-
-
 /* DiaryAnalysis 관련 스타일들 */
-
 /* 메인 컨테이너 */
 .diary-analysis-page {
   height: 100%;

@@ -1,6 +1,5 @@
 
 # -*- coding: utf-8 -*-
-
 import os
 from dotenv import load_dotenv
 import json
@@ -9,6 +8,8 @@ import logging
 import re
 import time
 from typing import Dict, List
+import threading
+from datetime import datetime, timedelta
 import google.generativeai as genai
 
 
@@ -27,12 +28,38 @@ if not GOOGLE_API_KEY:
 
 genai.configure(api_key=GOOGLE_API_KEY)
 
-model = genai.GenerativeModel('gemini-2.0-flash')
+model = genai.GenerativeModel('gemma-3-12b-it')
 
 # 기본 재시도 설정
-MAX_RETRIES = 2
-RETRY_DELAY = 1  # 초 단위 지연 시간
+MAX_RETRIES = 3
+RETRY_DELAY = 2  # 초 단위 지연 시간
 
+# --- 하루 호출량 확인 코드 시작 ---
+MAX_CALLS_PER_DAY = 14400  # Flash 모델의 하루 무료 호출 제한
+call_count_day = 0
+# 다음 날 자정으로 리셋 시간 설정
+day_reset_time = (datetime.now() + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+lock = threading.Lock()
+
+def check_and_update_daily_limit():
+    """하루 API 호출 제한을 확인하고 카운트를 업데이트합니다."""
+    global call_count_day, day_reset_time
+    now = datetime.now()
+    with lock:
+        # 자정이 지나면 카운트 초기화
+        if now >= day_reset_time:
+            call_count_day = 0
+            day_reset_time = (now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+            print("[알림] Gemini API 일일 호출 카운트가 초기화되었습니다.")
+
+        # 제한 확인
+        if call_count_day >= MAX_CALLS_PER_DAY:
+            raise RuntimeError(f"Gemini API 일일 호출 제한({MAX_CALLS_PER_DAY}회)을 초과했습니다.")
+        
+        # 카운트 증가 및 현황 출력
+        call_count_day += 1
+        print(f"[Gemini API 사용량] 오늘 호출: {call_count_day}/{MAX_CALLS_PER_DAY}")
+        
 # ---------------------
 # 2. 공통 함수
 # ---------------------
@@ -55,6 +82,9 @@ def call_gemini_model(full_prompt):
     """
     공통 모델 호출 함수 (generate_content)
     """
+    # --- 호출량 확인 함수 호출 추가 ---
+    check_and_update_daily_limit()
+
     for attempt in range(MAX_RETRIES):
         try:
             # 모델 호출
@@ -300,5 +330,38 @@ def recommend_activity_by_emotion(text):
     return cache_response(text, "_activity_recommend", response)
 
 
-
-
+#--예시 test코드--
+if __name__ == "__main__":
+    example_text = "오늘은 날씨가 맑고 기분이 좋았어요. 친구와 함께 공원에서 산책을 했습니다."
+    
+    # 감정 분석
+    emotion_result = emotion_anal(example_text)
+    print("감정 분석 결과:", emotion_result)
+    
+    # 장소 추출
+    place_result = extract_places(example_text)
+    print("장소 추출 결과:", place_result)
+    
+    # 사물 키워드 추출
+    object_keywords_result = extract_object_keywords(example_text, excluded_keywords=[place_result.get("장소")])
+    print("사물 키워드 추출 결과:", object_keywords_result)
+    
+    # 텍스트 요약
+    summary_result = summarize_text(example_text)
+    print("텍스트 요약 결과:", summary_result)
+    
+    # 통합 분석
+    analysis_result = analyze_text(example_text)
+    print("통합 분석 결과:", analysis_result)
+    
+    # 노래 추천
+    song_recommendation = recommend_song_by_emotion(example_text)
+    print("노래 추천 결과:", song_recommendation)
+    
+    # 감정 인사이트
+    emotion_insight_result = emotion_insight(example_text)
+    print("감정 인사이트 결과:", emotion_insight_result)
+    
+    # 활동 추천
+    activity_recommendation = recommend_activity_by_emotion(example_text)
+    print("활동 추천 결과:", activity_recommendation)

@@ -30,14 +30,14 @@ function App() {
   return (
     <div
       style={{
-        position: "fixed",            // 전체 화면 고정
-        top: "50%",                   // 수직 중앙 정렬
-        left: "50%",                  // 수평 중앙 정렬
+        position: "fixed",           
+        top: "50%",                   
+        left: "50%",                 
         transform: `translate(-50%, -50%) scale(${scale})`, // 정중앙 위치 + 크기 조정
         width: "2400px",
         height: "1350px",
-        backgroundColor: "#fff",     // 흰색 배경
         overflow: "hidden",
+        backgoundColor: "#fff",
       }}
     >
       <BrowserRouter>
