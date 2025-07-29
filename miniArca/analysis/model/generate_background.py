@@ -1,4 +1,3 @@
-
 import os
 from dotenv import load_dotenv
 import requests
@@ -14,7 +13,14 @@ STABILITY_API_KEY = os.getenv("STABILITY_API_KEY")
 if not STABILITY_API_KEY:
     raise ValueError("STABILITY_API_KEY is not set in the environment. Please check your .env file.")
 
-STABILITY_API_URL = "https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image"
+STABILITY_API_URL = "https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image"
+
+
+
+response = requests.get(
+    "https://api.stability.ai/v1/models",
+    headers={"Authorization": f"Bearer {STABILITY_API_KEY}"}
+)
 
 headers = {
     "Authorization": f"Bearer {STABILITY_API_KEY}",
@@ -56,8 +62,8 @@ def generate_anime_background(entry_id, location):
         ],
         "cfg_scale": 7,
         "clip_guidance_preset": "FAST_BLUE",
-        "height": 512,
-        "width": 768,
+        "height": 832,
+        "width": 1216,
         "samples": 1,
         "steps": 30
     }
@@ -70,7 +76,7 @@ def generate_anime_background(entry_id, location):
     image_data = response.json()["artifacts"][0]["base64"]
     image = Image.open(BytesIO(base64.b64decode(image_data)))
 
-    save_path = os.path.join("C:/Users/DS/miniArca/background", f"{entry_id}.png")
+    save_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "background", f"{entry_id}.png")
     image.save(save_path)
 
     print(f"✅ Stability API 이미지 저장 완료: {save_path}")
