@@ -12,6 +12,7 @@ public class UnityHttpServer : MonoBehaviour
 
     void Start()
     {
+        var dispatcher = UnityMainThreadDispatcher.Instance();  // 여기서 미리 인스턴스 생성
         listener = new HttpListener();
         listener.Prefixes.Add(url);
         listener.Start();
@@ -21,6 +22,7 @@ public class UnityHttpServer : MonoBehaviour
 
         Debug.Log("Unity HTTP Server started at " + url);
     }
+
 
     private void HandleIncomingConnections()
     {
