@@ -4,8 +4,6 @@ import axios from "axios";
 import "./css/Photo.css";
 import "./css/BackGround.css";
 import { v4 as uuidv4 } from "uuid";
-import Guide_front from './img/guide_front.png';
-import Guide_back from './img/guide_back.png';
 
 const playShutterSound = () => {
   const audio = new Audio('/sounds/shutter.mp3');
@@ -28,11 +26,13 @@ const Photo = () => {
   const photoInfo = {
     front: {
       type: "앞면 촬영",
-      message: "정면을 보고 자연스럽게 서주세요."
+      message: "앞면 전신사진을 준비하세요",
+      instruction: "정면을 보고 자연스럽게 서주세요"
     },
     back: {
       type: "뒷면 촬영",
-      message: "뒤돌아서서 자연스럽게 서주세요."
+      message: "뒷면 전신사진을 준비하세요",
+      instruction: "뒤돌아서서 자연스럽게 서주세요"
     }
   };
 
@@ -115,11 +115,9 @@ const Photo = () => {
       formData.append("analysis_id", analysisId);
       formData.append("part", step === "front" ? "f" : "b");
 
-      const response = await axios.post("http://localhost:8000/uploadPhotoPart", formData, {
+      await axios.post("http://localhost:8000/uploadPhotoPart", formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
-
-      console.log("서버 응답:", response.data);
 
       if (step === "front") {
         setStep("back");
@@ -128,6 +126,8 @@ const Photo = () => {
         setMessage("뒷면 촬영까지 5초...");
         startCountdown();
       } else {
+
+        // 뒷면 업로드 후 분석 시작 API 호출
         await axios.post('http://localhost:8000/analyzePhoto',
           new URLSearchParams({ analysis_id: analysisId })
         );
@@ -155,31 +155,42 @@ const Photo = () => {
 
   return (
     <div className="photo-container">
+      {!isCaptured && (
         <div className="left-info">
           <div className="countdown-info-card">
-            <div className="pose-text">{currentInfo.type}</div>
             <div className="countdown-text">{currentInfo.message}</div>
+            <div className="pose-text">{currentInfo.instruction}</div>
           </div>
         </div>
+      )}
 
-        <div className="right-info">
+      {!isCaptured && (
+        <div className="right-actions">
           <div className="shot-info-card">
-            {/* 사진 번호는 항상 표시 */}
             <div className="shot-counter">
               <span>{currentPhotoNumber}</span> / 2
             </div>
+            <div className="shot-type">{currentInfo.type}</div>
+          </div>
 
-            {/* 캡처 후에만 버튼 보이게 */}
-            {isCaptured && capturedImage && (
-              <div className="action-buttons" style={{ marginTop: "20px", display: "flex", flexDirection: "column", gap: "10px", zIndex: "10" }}>
-                <button className="btn" onClick={retry}>다시 찍기</button>
-                <button className="btn primary" onClick={uploadPhotoPart}>
-                  {step === "front" ? "뒷면 촬영" : "분석 시작"}
-                </button>
+          <div className="progress-card">
+            <div className="progress-steps">
+              <div className="progress-step">
+                <div className={`step-circle ${step === "front" ? "current" : "completed"}`}>
+                  앞
+                </div>
+                <div className="step-label">앞면</div>
               </div>
-            )}
+              <div className="progress-step">
+                <div className={`step-circle ${step === "back" ? "current" : ""}`}>
+                  뒤
+                </div>
+                <div className="step-label">뒷면</div>
+              </div>
+            </div>
           </div>
         </div>
+      )}
 
       <div className="photo-booth-ui">
         <div className="main-camera-container">
@@ -192,7 +203,6 @@ const Photo = () => {
                 className="camera-preview"
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
-
               <div className="countdown-overlay">
                 <div className="countdown-display-center">
                   {String(countdown).padStart(2, "0")}
@@ -213,10 +223,26 @@ const Photo = () => {
                   width: "100%",
                   height: "100%",
                   objectFit: "cover",
-                  zIndex: 1,
-                  pointerEvents: "none", // ← 이게 핵심!
+                  borderRadius: "36px"
                 }}
               />
+              <div
+                className="action-buttons"
+                style={{
+                  position: "absolute",
+                  bottom: "30px",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  display: "flex",
+                  gap: "20px",
+                  zIndex: 10
+                }}
+              >
+                <button className="btn" onClick={retry}>재촬영</button>
+                <button className="btn primary" onClick={uploadPhotoPart}>
+                  {step === "front" ? "다음 (뒷면)" : "분석 시작!"}
+                </button>
+              </div>
             </div>
           )}
         </div>

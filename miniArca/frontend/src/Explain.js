@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./css/Explain.css";
 
-import MiniArca3 from './img/MiniArca3.png';
 import step1Img from "./img/step1.png";
 import step2Img from "./img/step2.png";
 import step3Img from "./img/step3.png";
@@ -43,12 +42,7 @@ export default function Explain() {
             <div className="object-container">
                 {/* 서비스 사용 방법 안내 */}
                 <section className="steps-section">
-                    <div className="title-container">
-                        <img src={MiniArca3}
-                             alt="MINIARCA"
-                             style={{ width: "500px", height: "auto" }} />
-                    <h2>사용 방법</h2>
-                    </div>
+                    <h2>MiniArca 사용 방법</h2>
                     <div className="steps-container">{steps.map((step, index) => (
                             <div key={step.step} className="step-card">
                                 <div className="step-number">
