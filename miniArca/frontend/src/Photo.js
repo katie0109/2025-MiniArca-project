@@ -230,7 +230,7 @@ const Photo = () => {
                 className="action-buttons"
                 style={{
                   position: "absolute",
-                  bottom: "30px",
+                  bottom: "15px",
                   left: "50%",
                   transform: "translateX(-50%)",
                   display: "flex",
@@ -240,7 +240,7 @@ const Photo = () => {
               >
                 <button className="btn" onClick={retry}>재촬영</button>
                 <button className="btn primary" onClick={uploadPhotoPart}>
-                  {step === "front" ? "다음 (뒷면)" : "분석 시작!"}
+                  {step === "front" ? "다음" : "분석 시작!"}
                 </button>
               </div>
             </div>

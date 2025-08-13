@@ -12,7 +12,7 @@
 /* 좌측 카운트다운 정보 영역 */
 .left-info {
     position: fixed;
-    left: 30px;
+    left: -10px;
     top: 50%;
     transform: translateY(-50%);
     width: 650px;
@@ -41,17 +41,17 @@
 }
 
 .countdown-text {
-    font-size: 2.5em;
+    font-size: 2.8em;
     color: #4a5568;
     margin-bottom: 15px;
-    font-weight: 500;
+    font-weight: 700;
     line-height: 1.2;
 }
 
 .pose-text {
     font-size: 2.0em;
     color: #dc2626;
-    font-weight: 500;
+    font-weight: 700;
     line-height: 1.3;
 }
 
