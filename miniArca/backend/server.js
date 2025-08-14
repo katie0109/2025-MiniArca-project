@@ -55,7 +55,10 @@ const AnalysisSchema = new mongoose.Schema({
   object_keywords: {
     type: Map,
     of: [String]
-  }
+  },
+  song_recommend: mongoose.Schema.Types.Mixed,
+  emotion_insight: mongoose.Schema.Types.Mixed,
+  activity_recommend: mongoose.Schema.Types.Mixed
 }, { collection: 'diary_entries' });
 
 const AnalysisModel = mongoose.model('Analysis', AnalysisSchema);
@@ -161,9 +164,7 @@ app.get('/getDiaryData', async (req, res) => {
   try {
     const { analysis_id } = req.query;
 
-    const document = await AnalysisModel.findById(analysis_id)
-      .select('이모지 summary timestamp emotion_analysis final_emotions object_keywords -_id')
-      .exec();
+    const document = await AnalysisModel.findById(analysis_id).exec();
 
     if (!document) {
       return res.status(404).json({ error: '분석 결과를 찾을 수 없습니다' });
@@ -175,7 +176,10 @@ app.get('/getDiaryData', async (req, res) => {
       timestamp: document.timestamp ? document.timestamp.toISOString() : null,
       emotion_analysis: document.emotion_analysis,
       final_emotions: document.final_emotions,
-      object_keywords: document.object_keywords
+      object_keywords: document.object_keywords,
+      song_recommend: document.song_recommend,
+      emotion_insight: document.emotion_insight,
+      activity_recommend: document.activity_recommend
     });
     
   } catch (error) {
