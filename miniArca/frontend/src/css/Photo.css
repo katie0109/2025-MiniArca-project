@@ -4,7 +4,7 @@
     height: 1350px;
     overflow: hidden;
     background: linear-gradient(135deg, #fef9e7 0%, #f0f8ff 30%, #fdf2f8 60%, #f0f9ff 100%);
-    font-family: 'LeeSeoyun', sans-serif;
+    font-family: 'NEXON Lv1 Gothic OTF', sans-serif;
 }
 
 
@@ -12,10 +12,10 @@
 /* 좌측 카운트다운 정보 영역 */
 .left-info {
     position: fixed;
-    left: 200px;
+    left: -10px;
     top: 50%;
     transform: translateY(-50%);
-    width: 350px;
+    width: 650px;
     display: flex;
     flex-direction: column;
     gap: 25px;
@@ -41,17 +41,17 @@
 }
 
 .countdown-text {
-    font-size: 1.5em;
+    font-size: 2.8em;
     color: #4a5568;
     margin-bottom: 15px;
-    font-weight: 500;
+    font-weight: 700;
     line-height: 1.2;
 }
 
 .pose-text {
-    font-size: 1.3em;
+    font-size: 2.0em;
     color: #dc2626;
-    font-weight: 500;
+    font-weight: 700;
     line-height: 1.3;
 }
 
@@ -61,7 +61,7 @@
     right: 280px;
     top: 50%;
     transform: translateY(-50%);
-    width: 280px;
+    width:350px;
     display: flex;
     flex-direction: column;
     gap: 25px;
@@ -81,14 +81,14 @@
 }
 
 .shot-counter {
-    font-size: 3.5em;
+    font-size: 4.5em;
     color: #2d3748;
     font-weight: 800;
     margin-bottom: 15px;
 }
 
 .shot-type {
-    font-size: 1.5em;
+    font-size: 2.5em;
     color: #4a5568;
     font-weight: 500;
 }
@@ -113,7 +113,7 @@
 .progress-step {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 40px;
 }
 
 .step-circle {
@@ -148,12 +148,12 @@
 
 .step-circle.completed::after {
     content: "✓";
-    font-size: 1.5em;
+    font-size: 2.5em;
     font-weight: bold;
 }
 
 .step-label {
-    font-size: 1.4em;
+    font-size: 2.0em;
     color: #4a5568;
     font-weight: 500;
 }
@@ -192,7 +192,7 @@
               inset 0 1px 0 rgba(255, 255, 255, 0.5),
               0 0 0 1px rgba(255, 255, 255, 0.1);
   overflow: hidden;
-  width: 700px;     /* 기존보다 넓게 지정 */
+  width: 768px;     /* 기존보다 넓게 지정 */
   height: auto;      /* 비율 유지되므로 auto */
   aspect-ratio: 9 / 16;
 }
@@ -328,7 +328,7 @@
     border: 2px solid rgba(255, 240, 180, 0.5);
     border-radius: 22px;
     cursor: pointer;
-    font-family: 'LeeSeoyun', sans-serif;
+    font-family: 'NEXON Lv1 Gothic OTF', sans-serif;
     transition: all 0.3s ease;
     font-weight: 500;
     width: 160px;           /* min-width → width로 변경 */
