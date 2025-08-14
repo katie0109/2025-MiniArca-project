@@ -192,16 +192,6 @@ async def analyze_diary(entry: DiaryEntry):
         await app.database.diary_entries.update_one({"_id": analysis_id}, update_data)
         print("[DEBUG] Database update completed.")
 
-         # Unity에 POST 요청 보내기 (알림)
-        UNITY_SERVER_URL = "http://localhost:8081/notify/"
-        async with httpx.AsyncClient() as client:
-            try:
-                response = await client.post(UNITY_SERVER_URL, json={"analysis_id": analysis_id})
-                response.raise_for_status()
-                print("[DEBUG] Unity 알림 전송 성공")
-            except Exception as e:
-                print(f"[WARN] Unity 알림 실패: {e}")
-
         location = place_extraction.get("장소")
         image_path = None
         if location:
@@ -221,6 +211,17 @@ async def analyze_diary(entry: DiaryEntry):
         print(f"[DEBUG] Emojis selected: {emojis}")
 
         print("[DEBUG] Returning final response...")
+
+        # Unity 알림 전송 위치를 이쪽으로 이동
+        UNITY_SERVER_URL = "http://localhost:8081/notify/"
+        async with httpx.AsyncClient() as client:
+            try:
+                response = await client.post(UNITY_SERVER_URL, json={"analysis_id": analysis_id})
+                response.raise_for_status()
+                print("[DEBUG] Unity 알림 전송 성공")
+            except Exception as e:
+                print(f"[WARN] Unity 알림 실패: {e}")
+
         return {
             "id": analysis_id,
             "summary": summary_text,
