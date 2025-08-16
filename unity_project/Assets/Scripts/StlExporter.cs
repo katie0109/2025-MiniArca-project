@@ -56,14 +56,24 @@ public static class StlExporter
             {
                 Debug.Log($"[STL]  SkinnedMeshRenderer 메쉬 포함: {smr.name}");
 
-                // SkinnedMeshRenderer의 현재 포즈 상태로 메쉬 베이킹
                 Mesh bakedMesh = new Mesh();
                 smr.BakeMesh(bakedMesh);
+
+                // 디버깅용: 베이크된 메시 버텍스 범위 출력
+                Vector3 bakedMin = Vector3.positiveInfinity;
+                Vector3 bakedMax = Vector3.negativeInfinity;
+                foreach (var v in bakedMesh.vertices)
+                {
+                    bakedMin = Vector3.Min(bakedMin, v);
+                    bakedMax = Vector3.Max(bakedMax, v);
+                }
+                Debug.Log($"[STL] {smr.name} bakedMesh 로컬 버텍스 범위: Min{bakedMin}, Max{bakedMax}");
 
                 meshes.Add(bakedMesh);
                 transforms.Add(smr.transform);
             }
         }
+
 
         if (meshes.Count == 0)
         {
