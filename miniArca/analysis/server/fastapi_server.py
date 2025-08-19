@@ -68,6 +68,7 @@ async def upload_photo_part(
     part: str = Form(...),  # 'f' 또는 'b'
 ):
     try:
+        print(f"/uploadPhotoPart 요청 수신: analysis_id='{analysis_id}', part='{part}', filename='{file.filename}'")
         if part not in ('f', 'b'):
             raise HTTPException(status_code=400, detail="part는 'f' 또는 'b' 여야 합니다.")
 
@@ -76,29 +77,37 @@ async def upload_photo_part(
 
         filename = f"{analysis_id}_{part}.jpg"
         filepath = os.path.join(user_directory, filename)
+        print(f"파일 저장 경로: {filepath}")
 
 
         with open(filepath, "wb") as buffer:
             buffer.write(await file.read())
 
+        print(f"파일 저장 성공: {filepath}")
         return {"message": f"{part}면 사진 업로드 성공", "file_path": filepath}
 
     except Exception as e:
+        print(f"[ERROR] /uploadPhotoPart에서 오류 발생: {e}")
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"사진 업로드 실패: {str(e)}")
 
 @app.post("/analyzePhoto")
 async def analyze_photo(analysis_id: str = Form(...)):
     try:
+        print(f"/analyzePhoto 요청 수신: analysis_id='{analysis_id}'")
         user_directory = os.path.join(BASE_DIR,"analysis", "model", "Pictures", analysis_id)
         front_path = os.path.join(user_directory, f"{analysis_id}_f.jpg")
         back_path = os.path.join(user_directory, f"{analysis_id}_b.jpg")
+        print(f"분석할 파일 경로: front='{front_path}', back='{back_path}'")
 
         if not os.path.exists(front_path) or not os.path.exists(back_path):
+            print(f"[ERROR] 파일 없음: front_exists={os.path.exists(front_path)}, back_exists={os.path.exists(back_path)}")
             raise HTTPException(status_code=400, detail="앞면 또는 뒷면 사진이 없습니다.")
 
         # 분석 수행
+        print("analyze_combined_images 함수 호출 시작")
         analysis_result = analyze_combined_images(analysis_id)
+        print(f"사진 분석 결과: {analysis_result}")
 
         new_diary_entry = {
             "_id": analysis_id,
@@ -106,7 +115,9 @@ async def analyze_photo(analysis_id: str = Form(...)):
             "front_path": front_path,
             "back_path": back_path
         }
+        print(f"DB에 삽입할 데이터: {new_diary_entry}")
         await app.database.diary_entries.insert_one(new_diary_entry)
+        print(f"DB에 '{analysis_id}' 문서 삽입 성공")
 
         return {
             "message": "사진 분석 완료 및 결과 저장됨",
@@ -115,6 +126,7 @@ async def analyze_photo(analysis_id: str = Form(...)):
         }
 
     except Exception as e:
+        print(f"[ERROR] /analyzePhoto에서 오류 발생: {e}")
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"사진 분석 중 오류 발생: {str(e)}")
 
