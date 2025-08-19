@@ -19,7 +19,7 @@ from dotenv import load_dotenv
 from model import emoji_select
 import traceback
 from model.analyze import analyze_combined_images
-from model.ilgibunseog import recommend_song_by_emotion, emotion_insight, recommend_activity_by_emotion
+from model.ilgibunseog import get_song_recommendations, emotion_insight, recommend_activity_by_emotion
 import httpx
 import smtplib
 from email.message import EmailMessage
@@ -158,7 +158,7 @@ async def analyze_diary(entry: DiaryEntry):
 
         # --- 추가 분석: 노래 추천, 감정 인사이트, 활동 추천 ---
         print("Running recommend_song_by_emotion...")
-        song_recommend = recommend_song_by_emotion(content)
+        song_recommend = get_song_recommendations(content)
         print(f"Song recommend result: {song_recommend}")
 
         print("Running emotion_insight...")

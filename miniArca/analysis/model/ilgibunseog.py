@@ -263,61 +263,159 @@ def analyze_text(text):
     }
 
 
+# (파일의 다른 부분은 모두 그대로 사용)
+# ...
+# model = genai.GenerativeModel('gemma-3-12b-it') 바로 아랫부분에 추가 시작
+# ...
 
-def recommend_song_by_emotion(text):
-    """
-    일기 감정에 따라 '실존하는' 노래를 추천받을 확률을 높인 함수
-    """
-    cached_response = get_cached_response(text, "_song_recommend_verified") # 캐시 키 변경
+# --- [수정] 노래 추천 로직 시작 ---
+
+# 1. 스크립트 시작 시 노래 DB를 로드합니다.
+def load_song_db(filename="song_db.json"):
+    """JSON 파일에서 노래 데이터베이스를 로드하는 함수"""
+    # 현재 스크립트 파일의 위치를 기준으로 DB 파일 경로를 설정합니다.
+    script_dir = os.path.dirname(__file__)
+    db_path = os.path.join(script_dir, filename)
+    
+    try:
+        with open(db_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"오류: '{db_path}' 파일을 찾을 수 없습니다. 스크립트와 같은 폴더에 있는지 확인하세요.")
+        return []
+    except json.JSONDecodeError:
+        print(f"오류: '{filename}' 파일의 JSON 형식이 잘못되었습니다.")
+        return []
+
+# 프로그램 시작 시 DB를 메모리에 로드
+SONG_DB = load_song_db()
+# DB에 있는 모든 태그를 자동으로 수집하여 AI에게 알려줄 목록 생성
+AVAILABLE_TAGS = sorted(list(set(tag for song in SONG_DB for tag in song.get("tags", []))))
+
+
+def extract_emotion_tags_from_diary(diary_text: str):
+    """(AI 역할) 일기 내용에 맞는 감정 태그를 AI를 통해 추출하는 함수"""
+    key_suffix = "_emotion_tags"
+    cached_response = get_cached_response(diary_text, key_suffix)
     if cached_response:
         return cached_response
 
-    # --- [수정] Instructions 부분을 아래 내용으로 교체 ---
-    instructions = """
-    당신은 사실만을 기반으로 답변하는 매우 엄격한 '음악 정보 큐레이터'입니다. 당신의 유일한 목표는 100% 정확한 정보만을 제공하는 것입니다.
-    주어진 텍스트의 감정을 분석하고, 아래의 '작업 절차'와 '절대 규칙'에 따라 실존하는 한국 대중가요 3곡을 추천해주세요.
+    instructions = f"""
+    당신은 텍스트의 감정을 정확하게 분석하는 감정 분석가입니다.
+    주어진 일기 텍스트를 읽고, 아래의 '선택 가능한 태그 목록' 중에서 가장 관련성이 높은 태그를 1~3개 선택해주세요.
 
-    **[작업 절차]**
-    1.  **감정 분석:** 텍스트에서 핵심 감정을 정확히 파악한다.
-    2.  **정보 검색:** 파악된 감정과 관련된 '실제 유명한 노래'를 검색한다. 이때, 반드시 **'노래 제목', '가수명', '앨범명', '발매 연도'** 4가지 정보를 모두 정확하게 확인한다.
-    3.  **교차 검증 (가장 중요):** 확인된 4가지 정보가 모두 사실인지 스스로 교차 검증한다. **하나의 정보라도 확실하지 않거나, 존재하지 않는 정보라면 해당 노래는 즉시 후보에서 제외한다.**
-    4.  **최종 선택:** 모든 정보가 완벽하게 검증된 노래 중에서 가장 적합한 3곡을 선택하고 추천 이유를 작성한다.
+    [선택 가능한 태그 목록]
+    {', '.join(AVAILABLE_TAGS)}
 
-    **[절대 규칙]**
-    -   **규칙 1 (가장 중요):** 절대로, 어떤 상황에서도 가상의 노래, 가수, 앨범, 발매 연도를 만들지 않는다. 모든 정보는 100% 사실이어야 한다.
-    -   **규칙 2:** 추천하는 노래는 반드시 한국의 주요 음원 사이트에서 쉽게 찾을 수 있는 유명한 곡이어야 한다.
-    -   **규칙 3:** 아래 JSON 응답 형식을 완벽하게 준수해야 한다.
-
-    **[JSON 응답 형식]**
-    {
-        "노래 추천": [
-            {
-                "노래": "노래 제목 - 가수명", 
-                "앨범": "앨범명",
-                "발매연도": "YYYY",
-                "추천 이유": "한 문장 설명"
-            },
-            {
-                "노래": "노래 제목 - 가수명", 
-                "앨범": "앨범명",
-                "발매연도": "YYYY",
-                "추천 이유": "한 문장 설명"
-            },
-            {
-                "노래": "노래 제목 - 가수명", 
-                "앨범": "앨범명",
-                "발매연도": "YYYY",
-                "추천 이유": "한 문장 설명"
-            }
-        ]
-    }
+    다른 설명 없이, 반드시 아래의 JSON 형식으로만 응답해야 합니다:
+    {{
+        "tags": ["선택한 태그1", "선택한 태그2"]
+    }}
     """
     
-    prompt = f"텍스트: {text}\n추천 결과:"
-    full_prompt = f"{instructions}\n{prompt}"
+    prompt = f"일기 텍스트: {diary_text}\n추천 태그:"
+    response_json = call_gemini_model(f"{instructions}\n{prompt}")
+    tags = response_json.get("tags", [])
     
-    response = call_gemini_model(full_prompt)
-    return cache_response(text, "_song_recommend_verified", response)
+    return cache_response(diary_text, key_suffix, tags)
+
+
+def find_songs_by_tags(tags: list, max_results=3):
+    """(DB 검색 역할) 추출된 태그를 기반으로 DB에서 노래를 찾는 함수"""
+    if not tags or not SONG_DB:
+        return []
+        
+    scored_songs = []
+    for song in SONG_DB:
+        score = sum(1 for tag in tags if tag in song.get("tags", []))
+        if score > 0:
+            scored_songs.append({"score": score, "song_info": song})
+    
+    scored_songs.sort(key=lambda x: x["score"], reverse=True)
+    
+    # 최종 결과 형식을 기존과 맞추어 반환
+    final_recommendations = []
+    for item in scored_songs[:max_results]:
+        song_info = item["song_info"]
+        final_recommendations.append({
+            "노래": song_info.get("song"),
+            "추천 이유": f"일기의 '{', '.join(tags)}' 감정과 관련된 노래입니다.",
+            "url": song_info.get("url", "")
+        })
+        
+    return {"노래 추천": final_recommendations}
+
+
+# ⭐️ 최종적으로 호출할 새 노래 추천 함수
+def get_song_recommendations(text: str):
+    """
+    일기 텍스트를 받아 AI로 태그를 추출하고, DB에서 노래를 찾아 최종 추천 결과를 반환하는 메인 함수
+    """
+    # 1. AI에게 일기 내용에 맞는 태그 추출 요청
+    extracted_tags = extract_emotion_tags_from_diary(text)
+    
+    # 2. 추출된 태그로 노래 DB에서 노래 검색
+    final_songs = find_songs_by_tags(extracted_tags)
+    
+    return final_songs
+
+# --- [수정] 노래 추천 로직 끝 ---
+
+
+# def recommend_song_by_emotion(text):
+#     """
+#     일기 감정에 따라 '실존하는' 노래를 추천받을 확률을 높인 함수
+#     """
+#     cached_response = get_cached_response(text, "_song_recommend_verified") # 캐시 키 변경
+#     if cached_response:
+#         return cached_response
+
+#     # --- [수정] Instructions 부분을 아래 내용으로 교체 ---
+#     instructions = """
+#     당신은 사실만을 기반으로 답변하는 매우 엄격한 '음악 정보 큐레이터'입니다. 당신의 유일한 목표는 100% 정확한 정보만을 제공하는 것입니다.
+#     주어진 텍스트의 감정을 분석하고, 아래의 '작업 절차'와 '절대 규칙'에 따라 실존하는 한국 대중가요 3곡을 추천해주세요.
+
+#     **[작업 절차]**
+#     1.  **감정 분석:** 텍스트에서 핵심 감정을 정확히 파악한다.
+#     2.  **정보 검색:** 파악된 감정과 관련된 '실제 유명한 노래'를 검색한다. 이때, 반드시 **'노래 제목', '가수명', '앨범명', '발매 연도'** 4가지 정보를 모두 정확하게 확인한다.
+#     3.  **교차 검증 (가장 중요):** 확인된 4가지 정보가 모두 사실인지 스스로 교차 검증한다. **하나의 정보라도 확실하지 않거나, 존재하지 않는 정보라면 해당 노래는 즉시 후보에서 제외한다.**
+#     4.  **최종 선택:** 모든 정보가 완벽하게 검증된 노래 중에서 가장 적합한 3곡을 선택하고 추천 이유를 작성한다.
+
+#     **[절대 규칙]**
+#     -   **규칙 1 (가장 중요):** 절대로, 어떤 상황에서도 가상의 노래, 가수, 앨범, 발매 연도를 만들지 않는다. 모든 정보는 100% 사실이어야 한다.
+#     -   **규칙 2:** 추천하는 노래는 반드시 한국의 주요 음원 사이트에서 쉽게 찾을 수 있는 유명한 곡이어야 한다.
+#     -   **규칙 3:** 아래 JSON 응답 형식을 완벽하게 준수해야 한다.
+
+#     **[JSON 응답 형식]**
+#     {
+#         "노래 추천": [
+#             {
+#                 "노래": "노래 제목 - 가수명", 
+#                 "앨범": "앨범명",
+#                 "발매연도": "YYYY",
+#                 "추천 이유": "한 문장 설명"
+#             },
+#             {
+#                 "노래": "노래 제목 - 가수명", 
+#                 "앨범": "앨범명",
+#                 "발매연도": "YYYY",
+#                 "추천 이유": "한 문장 설명"
+#             },
+#             {
+#                 "노래": "노래 제목 - 가수명", 
+#                 "앨범": "앨범명",
+#                 "발매연도": "YYYY",
+#                 "추천 이유": "한 문장 설명"
+#             }
+#         ]
+#     }
+#     """
+    
+#     prompt = f"텍스트: {text}\n추천 결과:"
+#     full_prompt = f"{instructions}\n{prompt}"
+    
+#     response = call_gemini_model(full_prompt)
+#     return cache_response(text, "_song_recommend_verified", response)
 
 
 
@@ -393,7 +491,7 @@ if __name__ == "__main__":
     print("통합 분석 결과:", analysis_result)
     
     # 노래 추천
-    song_recommendation = recommend_song_by_emotion(example_text)
+    song_recommendation = get_song_recommendations(example_text)
     print("노래 추천 결과:", song_recommendation)
     
     # 감정 인사이트

@@ -192,7 +192,7 @@ const DiaryAnalysisPage = ({ analysisData }) => {
                 <span className="music-emoji" style={{ fontSize: '22px', marginRight: '12px' }}>🎵</span>
                 <div className="music-details" style={{ flex: 1 }}>
                   <div className="music-title">{song['노래']}</div>
-                  <div className="music-reason">{song['추천 이유']}</div>
+                 {/* <div className="music-reason">{song['추천 이유']}</div> */}
                 </div>
               </div>
             ))
