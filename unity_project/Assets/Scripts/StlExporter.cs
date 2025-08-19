@@ -109,7 +109,7 @@ public static class StlExporter
         }
 
         // 저장 경로 생성
-        string path = @"C:\Users\DS\miniArca\STL";
+        string path = @"C:\Users\DS\2025-MiniArca-project\miniArca\STL";
         if (!Directory.Exists(path))
         {
             Directory.CreateDirectory(path);

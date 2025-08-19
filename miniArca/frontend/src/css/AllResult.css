@@ -295,8 +295,8 @@
 .diary-book {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  width: 95vw;
-  max-width: 1500px;
+  width: 120vw;
+  max-width: 1700px;
   aspect-ratio: 2 / 1.4;
   margin: 0 auto;
   overflow: hidden;
@@ -323,6 +323,7 @@
   height: 100%;
   aspect-ratio: 0.714;
   overflow: hidden;
+  transform: translateX(30px);
 }
 
 /* 프레임 */
@@ -420,7 +421,7 @@
   animation: pageAppear 0.8s ease-out;
   position: relative;
   z-index: 10;
-  width: 85%;          /* 그대로 두세요 */
+  width: 95%;          /* 그대로 두세요 */
   padding: 0.5rem;     /* 그대로 두세요 */
   transform: scale(0.95, 0.9) translateX(-2%);  /* scale 값만 조정 */
   transform-origin: center;

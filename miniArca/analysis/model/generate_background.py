@@ -79,5 +79,5 @@ def generate_anime_background(entry_id, location):
     save_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "background", f"{entry_id}.png")
     image.save(save_path)
 
-    print(f"✅ Stability API 이미지 저장 완료: {save_path}")
+    print(f"Stability API 이미지 저장 완료: {save_path}")
     return save_path

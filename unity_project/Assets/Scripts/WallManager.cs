@@ -81,4 +81,3 @@ public class WallManager : MonoBehaviour
     }
 
 }
-

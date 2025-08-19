@@ -58,7 +58,7 @@ def check_and_update_daily_limit():
         
         # 카운트 증가 및 현황 출력
         call_count_day += 1
-        print(f"[Gemini API 사용량] 오늘 호출: {call_count_day}/{MAX_CALLS_PER_DAY}")
+        #print(f"[Gemini API 사용량] 오늘 호출: {call_count_day}/{MAX_CALLS_PER_DAY}")
         
 # ---------------------
 # 2. 공통 함수
@@ -185,9 +185,12 @@ def extract_object_keywords(text, excluded_keywords=None):
         return cached_response
     
     instructions = """
-    중요: 장소와 관련된 단어들은 포함하지 마세요.
-    주어진 한국어 텍스트에서 주요 감정 또는 세부 감정과 관련된 사물, 상황 또는 개념을 중심으로 명사를 5개 추출해주세요.
-    다음 형식으로 정확하게 결과를 제공해주세요:
+    주어진 한국어 텍스트에서 감정과 관련된 핵심 명사를 5개 추출해주세요.
+    장소와 관련된 단어는 포함하지 마세요.
+    
+    **매우 중요**: 응답 JSON 객체의 키는 반드시 "사물 키워드"여야 합니다. 절대로 다른 키 이름을 사용하지 마세요.
+
+    아래 형식을 반드시 준수하여 결과를 제공해주세요:
     {
         "사물 키워드": ["명사1", "명사2", "명사3", "명사4", "명사5"]
     }
@@ -208,7 +211,7 @@ def extract_object_keywords(text, excluded_keywords=None):
 # ---------------------
 def summarize_text(text):
     """
-    입력된 텍스트를 띄어쓰기 포함 60자 이내로 요약
+    입력된 텍스트를 띄어쓰기 포함 30자 이내로 요약
     """
     cached_response = get_cached_response(text, "_summary")
     if cached_response:
@@ -216,7 +219,7 @@ def summarize_text(text):
     
     instructions = """
     다음 한국어 텍스트를 핵심 내용만 담아 요약해주세요.
-    중요 : 요약문은 공백, 띄어쓰기, 문장부호, 숫자 등 모든 문자를 포함한 글자수가 45글자 이상 55글자 이하여야 합니다.
+    중요 : 요약문은 공백, 띄어쓰기, 문장부호, 숫자 등 모든 문자를 포함한 글자수가 45글자 이하여야 합니다.
 
 
     **응답 형식:**

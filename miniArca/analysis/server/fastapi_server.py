@@ -125,49 +125,49 @@ async def analyze_diary(entry: DiaryEntry):
     try:
         content = entry.content
         analysis_id = entry.analysis_id
-        print(f"[DEBUG] Received content: {content}")
-        print(f"[DEBUG] Received analysis_id: {analysis_id}")
+        print(f"Received content: {content}")
+        print(f"Received analysis_id: {analysis_id}")
 
-        print("[DEBUG] Trying to find document in database...")
+        print("Trying to find document in database...")
         document = await app.database.diary_entries.find_one({"_id": analysis_id})
         if not document:
-            print("[DEBUG] No document found for given analysis_id.")
+            print("No document found for given analysis_id.")
             raise HTTPException(status_code=400, detail="사진 분석을 먼저 수행해야 합니다.")
-        print("[DEBUG] Document found.")
+        print("Document found.")
 
-        print("[DEBUG] Performing emotion analysis...")
+        print("Performing emotion analysis...")
         emotion_analysis = ilgibunseog.emotion_anal(content)
-        print(f"[DEBUG] Emotion analysis result: {emotion_analysis}")
+        print(f"Emotion analysis result: {emotion_analysis}")
 
-        print("[DEBUG] Extracting places...")
+        print("Extracting places...")
         place_extraction = ilgibunseog.extract_places(content)
-        print(f"[DEBUG] Place extraction result: {place_extraction}")
+        print(f"Place extraction result: {place_extraction}")
 
-        print("[DEBUG] Extracting object keywords...")
+        print("Extracting object keywords...")
         object_keywords = ilgibunseog.extract_object_keywords(content)
-        print(f"[DEBUG] Object keywords result: {object_keywords}")
+        print(f"Object keywords result: {object_keywords}")
 
-        print("[DEBUG] Calculating final emotions...")
+        print("Calculating final emotions...")
         final_emotions = calculate_final_emotion(emotion_analysis)
-        print(f"[DEBUG] Final emotions result: {final_emotions}")
+        print(f"Final emotions result: {final_emotions}")
 
-        print("[DEBUG] Summarizing text...")
+        print("Summarizing text...")
         summary_result = ilgibunseog.summarize_text(content)
         summary_text = summary_result.get("요약", "")
-        print(f"[DEBUG] Summary result: {summary_text}")
+        print(f"Summary result: {summary_text}")
 
         # --- 추가 분석: 노래 추천, 감정 인사이트, 활동 추천 ---
-        print("[DEBUG] Running recommend_song_by_emotion...")
+        print("Running recommend_song_by_emotion...")
         song_recommend = recommend_song_by_emotion(content)
-        print(f"[DEBUG] Song recommend result: {song_recommend}")
+        print(f"Song recommend result: {song_recommend}")
 
-        print("[DEBUG] Running emotion_insight...")
+        print("Running emotion_insight...")
         emotion_insight_result = emotion_insight(content)
-        print(f"[DEBUG] Emotion insight result: {emotion_insight_result}")
+        print(f"Emotion insight result: {emotion_insight_result}")
 
-        print("[DEBUG] Running recommend_activity_by_emotion...")
+        print("Running recommend_activity_by_emotion...")
         activity_recommend = recommend_activity_by_emotion(content)
-        print(f"[DEBUG] Activity recommend result: {activity_recommend}")
+        print(f"Activity recommend result: {activity_recommend}")
         # ---
 
         cached_analysis_results["content"] = content
@@ -188,29 +188,29 @@ async def analyze_diary(entry: DiaryEntry):
             }
         }
 
-        print("[DEBUG] Updating database with analysis results...")
+        print("Updating database with analysis results...")
         await app.database.diary_entries.update_one({"_id": analysis_id}, update_data)
-        print("[DEBUG] Database update completed.")
+        print("Database update completed.")
 
         location = place_extraction.get("장소")
         image_path = None
         if location:
-            print(f"[DEBUG] Generating anime background for location: {location}")
+            print(f"Generating anime background for location: {location}")
             image_path = generate_anime_background(analysis_id, location)
-            print(f"[DEBUG] Generated image path: {image_path}")
+            print(f"Generated image path: {image_path}")
 
-            print("[DEBUG] Updating database with background image path...")
+            print("Updating database with background image path...")
             await app.database.diary_entries.update_one(
                 {"_id": analysis_id},
                 {"$set": {"background_image_path": image_path}}
             )
-            print("[DEBUG] Background image path updated in database.")
+            print("Background image path updated in database.")
 
-        print("[DEBUG] Selecting and saving emojis...")
+        print("Selecting and saving emojis...")
         emojis = await select_and_save_emoji(analysis_id)
-        print(f"[DEBUG] Emojis selected: {emojis}")
+        print(f"Emojis selected: {emojis}")
 
-        print("[DEBUG] Returning final response...")
+        print("Returning final response...")
 
         # Unity 알림 전송 위치를 이쪽으로 이동
         UNITY_SERVER_URL = "http://localhost:8081/notify/"
@@ -218,7 +218,7 @@ async def analyze_diary(entry: DiaryEntry):
             try:
                 response = await client.post(UNITY_SERVER_URL, json={"analysis_id": analysis_id})
                 response.raise_for_status()
-                print("[DEBUG] Unity 알림 전송 성공")
+                print("Unity 알림 전송 성공")
             except Exception as e:
                 print(f"[WARN] Unity 알림 실패: {e}")
 
@@ -419,7 +419,7 @@ class STLPathUpdate(BaseModel):
 @app.post("/update-stl-path")
 async def update_stl_path(update: STLPathUpdate):
     try:
-        print(f"[DEBUG] STL 경로 업데이트 요청 - ID: {update.analysis_id}, Path: {update.stl_path}")
+        print(f"STL 경로 업데이트 요청 - ID: {update.analysis_id}, Path: {update.stl_path}")
         
         # 먼저 해당 문서가 존재하는지 확인
         existing_doc = await app.database.diary_entries.find_one({"_id": update.analysis_id})
@@ -565,12 +565,12 @@ async def send_email(
                         subtype='octet-stream', 
                         filename=filename
                     )
-                    print(f"[이메일] ✅ STL 파일 첨부 성공: {filename} ({len(file_data)} bytes)")
+                    print(f"[이메일] STL 파일 첨부 성공: {filename} ({len(file_data)} bytes)")
                     stl_attached = True
             except Exception as e:
-                print(f"[이메일] ❌ STL 파일 첨부 실패: {e}")
+                print(f"[이메일] STL 파일 첨부 실패: {e}")
         else:
-            print(f"[이메일] ⚠️ STL 파일 없음 또는 경로 오류: {stl_path}")
+            print(f"[이메일] STL 파일 없음 또는 경로 오류: {stl_path}")
         
         # ✅ PNG 파일 첨부 (있는 경우)
         png_attached = False
@@ -588,10 +588,10 @@ async def send_email(
                         subtype='png', 
                         filename=filename
                     )
-                    print(f"[이메일] ✅ PNG 파일 첨부 성공: {filename}")
+                    print(f"[이메일] PNG 파일 첨부 성공: {filename}")
                     png_attached = True
             except Exception as e:
-                print(f"[이메일] ❌ PNG 파일 첨부 실패: {e}")
+                print(f"[이메일] PNG 파일 첨부 실패: {e}")
         
         # ✅ 배경 이미지 첨부 (있는 경우) - 추가
         bg_attached = False
@@ -617,25 +617,25 @@ async def send_email(
                         subtype=subtype, 
                         filename=filename
                     )
-                    print(f"[이메일] ✅ 배경 이미지 첨부 성공: {filename}")
+                    print(f"[이메일] 배경 이미지 첨부 성공: {filename}")
                     bg_attached = True
             except Exception as e:
-                print(f"[이메일] ❌ 배경 이미지 첨부 실패: {e}")
+                print(f"[이메일] 배경 이미지 첨부 실패: {e}")
         
         print(f"[이메일] 첨부 파일 요약 - STL: {stl_attached}, PNG: {png_attached}, 배경: {bg_attached}")
         
         # 첨부 파일이 없으면 경고 (개선)
         if not (stl_attached or png_attached or bg_attached):
-            print("[이메일] ⚠️ 첨부할 파일이 없습니다. 텍스트만 전송됩니다.")
+            print("[이메일] 첨부할 파일이 없습니다. 텍스트만 전송됩니다.")
         
         # 이메일 전송
         try:
             with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
                 smtp.login("path22ForSend@gmail.com", "nsbv zvph vrwu lqca")
                 smtp.send_message(msg)
-            print("[이메일] ✅ SMTP 전송 성공")
+            print("[이메일] SMTP 전송 성공")
         except Exception as smtp_error:
-            print(f"[이메일] ❌ SMTP 전송 실패: {smtp_error}")
+            print(f"[이메일] SMTP 전송 실패: {smtp_error}")
             raise HTTPException(status_code=500, detail=f"이메일 전송 실패: {str(smtp_error)}")
         
         # 결과 메시지
@@ -648,9 +648,9 @@ async def send_email(
             attached_files.append("배경 이미지")
         
         if attached_files:
-            message = f"이메일 전송 완료 ✅ (첨부: {', '.join(attached_files)})"
+            message = f"이메일 전송 완료 (첨부: {', '.join(attached_files)})"
         else:
-            message = "이메일 전송 완료 ✅ (첨부 파일 없음)"
+            message = "이메일 전송 완료 (첨부 파일 없음)"
         
         print(f"[이메일] {message}")
         
@@ -704,4 +704,4 @@ async def debug_stl_info(analysis_id: str):
     
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, port=8000,timeout_keep_alive=1000)
+    uvicorn.run(app, port=8000,timeout_keep_alive=1000,access_log=False)

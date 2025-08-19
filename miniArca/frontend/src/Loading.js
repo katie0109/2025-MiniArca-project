@@ -191,6 +191,7 @@ function DiaryResult() {
       </div>
 
       <div className="page-buttons">
+        <div style={{ width: '60px' }} />
         {isCharacterReady && (
           <button
             className="circle-button right"

@@ -37,8 +37,18 @@ section h2 {
     font-weight: 700;
     color: #646464;
     text-align: center;
-    margin-bottom: 100px;
     letter-spacing: 0.05em;
+}
+
+.title-container {
+    padding-bottom: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+    margin: 0 auto;
+    /* 스크롤을 위해 flex-wrap 추가 */
+    flex-wrap: wrap;
 }
 
 /* 사용 방법 섹션 */

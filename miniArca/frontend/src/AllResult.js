@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 import DiaryAnalysisPage from './DiaryAnalysisPage';
 import './css/AllResult.css';
+import FloatingEmojis from './FloatingEmojis';
+
 
 const AllResult = () => {
   const [analysisData, setAnalysisData] = useState(null);
@@ -145,7 +147,7 @@ const AllResult = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setSuccessMessage(data.message || '이메일이 성공적으로 전송되었습니다! ✅');
+        setSuccessMessage(data.message || '이메일이 성공적으로 전송되었습니다!');
         setTimeout(() => {
           closeModal();
         }, 2000);
@@ -185,7 +187,7 @@ const AllResult = () => {
 
   // 2. 요일은 KST 기준 (UTC + 9시간)
   const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
-  const weekday = ['일', '월', '화', '수', '목', '금', '토'][kstDate.getDay()];
+  const weekday = ['토', '일', '월', '화', '수', '목', '금'][kstDate.getDay()];
 
   return { year, month, day, weekday };
 }
@@ -221,15 +223,12 @@ const AllResult = () => {
       {/* 전역 에러 메시지 표시 */}
       {errorMessage && !isModalOpen && (
         <div className="global-error-message">
-          ❌ {errorMessage}
+          {errorMessage}
         </div>
       )}
 
-      <div className="title">
-        <h2>나만의 특별한 일기장</h2>
-      </div>
-
       <div className="diary-book" ref={diaryRef}>
+        <FloatingEmojis emojis={emojis} /> {/* 👈 이 부분 추가 */}
         <img src="/diary_background.png" alt="다이어리 배경" className="diary-background-img" />
 
         {/* 왼쪽 페이지 */}
