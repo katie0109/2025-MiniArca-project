@@ -1,4 +1,0 @@
-Label: bang_long, Color: #353332
-Label: pants_midi, Color: #121d22
-Label: short_sleeve, Color: #a7afb4
-Label: pants_mini, Color: #131e22
