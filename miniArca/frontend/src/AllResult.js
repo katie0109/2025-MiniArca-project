@@ -178,19 +178,19 @@ const AllResult = () => {
   }, [isModalOpen]);
 
   function formatDateParts(timestamp) {
-  const utcDate = new Date(timestamp);
+    const utcDate = new Date(timestamp);
 
-  // 1. 날짜는 UTC 기준 그대로
-  const year = utcDate.getUTCFullYear();
-  const month = String(utcDate.getUTCMonth() + 1).padStart(2, '0');
-  const day = String(utcDate.getUTCDate()).padStart(2, '0');
+    // 1. 날짜는 UTC 기준 그대로
+    const year = utcDate.getUTCFullYear();
+    const month = String(utcDate.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(utcDate.getUTCDate()).padStart(2, '0');
 
-  // 2. 요일은 KST 기준 (UTC + 9시간)
-  const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
-  const weekday = ['토', '일', '월', '화', '수', '목', '금'][kstDate.getDay()];
+    // 2. 요일은 KST 기준 (UTC + 9시간)
+    const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
+    const weekday = ['토', '일', '월', '화', '수', '목', '금'][kstDate.getDay()];
 
-  return { year, month, day, weekday };
-}
+    return { year, month, day, weekday };
+  }
 
 
   useEffect(() => {
@@ -215,8 +215,10 @@ const AllResult = () => {
   if (loading) return <div className="loading">로딩 중...</div>;
   if (error) return <div className="error">에러 발생: {error}</div>;
 
-  const charsPerRow = 8;
-  const rowsNeeded = Math.ceil(summary.length / charsPerRow);
+  // ⭐️ [수정] 고정된 셀 개수 정의
+  const totalCells = 60;
+  // ⭐️ [수정] summary를 60자로 채웁니다. 남는 공간은 공백(' ')으로 채웁니다.
+  const paddedSummary = summary.padEnd(totalCells, ' ');
 
   return (
     <div className="diary-container">
@@ -258,29 +260,14 @@ const AllResult = () => {
                 playsInline
               />
 
-              <div className="grid-layer" style={{ gridTemplateRows: `repeat(${rowsNeeded}, 1fr)` }}>
-                {Array.from({ length: rowsNeeded }).map((_, rowIdx) => {
-                  const start = rowIdx * charsPerRow;
-                  const line = summary.slice(start, start + charsPerRow).padEnd(charsPerRow, ' ');
-                  return line.split('').map((char, colIdx) => (
-                    <div key={`${rowIdx}-${colIdx}`} className="grid-cell">{char}</div>
-                  ));
-                })}
+              {/* ⭐️ [수정] 그리드 렌더링 로직 변경 */}
+              <div className="grid-layer">
+                {paddedSummary.split('').map((char, index) => (
+                  <div key={index} className="grid-cell">
+                    {char}
+                  </div>
+                ))}
               </div>
-
-              {/* 이모지 삭제
-              {emojis.map((emoji, index) => (
-                <img
-                  key={index}
-                  src={`/emojis/${emoji}.png`}
-                  alt={`emoji-${index}`}
-                  className="emoji-sticker"
-                  style={{
-                    left: emojiPositions[index]?.left || 10,
-                    top: emojiPositions[index]?.top || 10,
-                  }}
-                />
-              ))}*/} 
             </div>
           </div>
         </div>

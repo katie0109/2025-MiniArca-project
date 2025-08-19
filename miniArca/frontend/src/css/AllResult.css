@@ -372,16 +372,17 @@
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
-/* 요약 텍스트 - 반응형 개선 */
+/* ⭐️ [수정] 요약 텍스트 - 행(row)을 6개로 고정 */
 .grid-layer {
   position: absolute;
-  top: 56%;         /* 기존 bottom → top으로 전환해서 아래쪽으로 이동 */
-  left: 50%;        /* 오른쪽으로 이동 */
+  top: 56%;      /* 기존 bottom → top으로 전환해서 아래쪽으로 이동 */
+  left: 50%;      /* 오른쪽으로 이동 */
   transform: translateX(-50%);
   width: 80%;
   height: 37%;
   display: grid;
   grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(6, 1fr); /* 👈 6줄로 고정 */
   row-gap: 2px;
   font-family: 'SangSangShinb7', sans-serif;
   z-index: 4;
@@ -422,7 +423,7 @@
   position: relative;
   z-index: 10;
   width: 95%;          /* 그대로 두세요 */
-  padding: 0.5rem;     /* 그대로 두세요 */
+  padding: 0.5rem;      /* 그대로 두세요 */
   transform: scale(0.95, 0.9) translateX(-2%);  /* scale 값만 조정 */
   transform-origin: center;
 }
