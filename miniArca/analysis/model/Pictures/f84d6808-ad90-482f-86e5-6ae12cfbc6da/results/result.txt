@@ -1,0 +1,3 @@
+Label: no_bang_long, Color: #535250
+Label: short_sleeve, Color: #a0a9ae
+Label: pants_midi, Color: #869599

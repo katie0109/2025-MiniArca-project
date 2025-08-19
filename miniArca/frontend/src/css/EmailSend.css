@@ -18,17 +18,17 @@
 /* 이메일 전송 버튼 - 흰 배경 제거 및 크기 조정 */
 .email-send-button {
   position: fixed;
-  bottom: 15px;
-  right: 32px;
+  bottom: 100px;
+  right: 80px;
   background: linear-gradient(to right, #e9c7c7, #c3e7b8);
   color: rgb(80, 80, 80);
   font-weight: bold;
-  padding: 14px 20px; /* 패딩 줄임 */
+  padding: 20px 24px; /* 패딩 줄임 */
   border-radius: 50px;
   border: none;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  font-size: 14px; /* 폰트 크기 줄임 */
+  font-size: 20px; /* 폰트 크기 줄임 */
   z-index: 50;
   transition: all 0.3s ease;
   /* 배경색 완전히 제거하기 위한 추가 설정 */
