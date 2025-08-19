@@ -60,6 +60,9 @@ pip-selfcheck.json
 .DS_Store
 Thumbs.db
 
+miniArca/unityimg/
+miniArca/analysis/model/Pictures/
+
 # Jupyter
 .ipynb_checkpoints
 # (필요시) 추가로 무시할 폴더/파일
