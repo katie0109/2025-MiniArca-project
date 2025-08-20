@@ -43,6 +43,7 @@ const AllResult = () => {
         const response = await axios.get('http://localhost:5000/getDiaryData', {
           params: { analysis_id: analysisId },
         });
+        console.log('[AllResult] fetchDiaryData response.data:', response.data);
         setAnalysisData(response.data);
         setEmojis(response.data.emojis);
         setSummary(response.data.summary);
@@ -217,9 +218,13 @@ const AllResult = () => {
       });
 
       setEmojiPositions(positions);
+      console.log('[AllResult] emojiPositions:', positions);
+    } else {
+      console.log('[AllResult] diaryRef.current:', diaryRef.current, 'emojis:', emojis);
     }
   }, [emojis]);
 
+  console.log('[AllResult] emojis state:', emojis);
   if (loading) return <div className="loading">로딩 중...</div>;
   if (error) return <div className="error">에러 발생: {error}</div>;
 
@@ -238,7 +243,9 @@ const AllResult = () => {
       )}
 
       <div className="diary-book" ref={diaryRef}>
-        <FloatingEmojis emojis={emojis} /> {/* 👈 이 부분 추가 */}
+  {/* 디버깅: FloatingEmojis에 전달되는 이모지 확인 */}
+  {console.log('[AllResult] Rendering FloatingEmojis with emojis:', emojis)}
+  <FloatingEmojis emojis={emojis} />
         <img src="/diary_background.png" alt="다이어리 배경" className="diary-background-img" />
 
         {/* 왼쪽 페이지 */}

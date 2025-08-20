@@ -170,8 +170,17 @@ app.get('/getDiaryData', async (req, res) => {
       return res.status(404).json({ error: '분석 결과를 찾을 수 없습니다' });
     }
 
+    // 디버깅: DB에서 불러온 document와 emojis 필드 출력
+    // console.log('[getDiaryData] document:', document);
+    // console.log('[getDiaryData] document.emojis:', document.emojis, 'typeof:', typeof document.emojis, 'isArray:', Array.isArray(document.emojis));
+
+    // emojis 배열의 각 요소에서 불필요한 공백/쉼표 제거
+    const cleanEmojis = Array.isArray(document.emojis)
+      ? document.emojis.map(e => typeof e === 'string' ? e.replace(/,?$/,'').trim() : e)
+      : [];
+
     res.json({
-      emojis: document.emojis,
+      emojis: cleanEmojis,
       summary: document.summary,
       timestamp: document.timestamp ? document.timestamp.toISOString() : null,
       emotion_analysis: document.emotion_analysis,
