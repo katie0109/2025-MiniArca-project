@@ -39,7 +39,17 @@
   outline: none;
   backdrop-filter: none;
 }
+.action-buttons-container {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  z-index: 100;
+}
 
+.home-button,
 .email-send-container {
   background: transparent !important;
   box-shadow: none !important;

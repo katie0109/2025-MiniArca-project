@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate} from 'react-router-dom';
 import DiaryAnalysisPage from './DiaryAnalysisPage';
 import './css/AllResult.css';
 import FloatingEmojis from './FloatingEmojis';
@@ -10,6 +10,7 @@ const AllResult = () => {
   const [analysisData, setAnalysisData] = useState(null);
   const [showAnalysis, setShowAnalysis] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { analysisId } = location.state || {};
 
   const [emojis, setEmojis] = useState([]);
@@ -28,6 +29,13 @@ const AllResult = () => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const diaryRef = useRef(null);
+
+  const handleGoHome = () => {
+    // 로컬 스토리지에서 analysis_id 제거
+    localStorage.removeItem("analysis_id");
+    // 홈 화면으로 이동
+    navigate('/');
+  };
 
   useEffect(() => {
     const fetchDiaryData = async () => {
@@ -285,14 +293,25 @@ const AllResult = () => {
         )}
       </div>
 
-      {/* 오른쪽 하단 이메일 전송 버튼 */}
-      <button
-        onClick={openModal}
-        disabled={!emailAnalysisId}
-        className={`email-send-button ${!emailAnalysisId ? 'disabled' : ''}`}
-      >
-        이메일로 전송하기
-      </button>
+      {/* 버튼 컨테이너 */}
+      <div className="action-buttons-container">
+          {/* 홈으로 돌아가기 버튼 */}
+          <button
+            onClick={handleGoHome}
+            className="home-button"
+          >
+            홈으로 돌아가기
+          </button>
+
+        {/* 오른쪽 하단 이메일 전송 버튼 */}
+        <button
+          onClick={openModal}
+          disabled={!emailAnalysisId}
+          className={`email-send-button ${!emailAnalysisId ? 'disabled' : ''}`}
+        >
+          이메일로 전송하기
+        </button>
+      </div>
 
       {/* 모달 오버레이 */}
       {isModalOpen && (
