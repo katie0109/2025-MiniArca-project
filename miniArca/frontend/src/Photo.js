@@ -127,12 +127,13 @@ const Photo = () => {
         setMessage("뒷면 촬영까지 5초...");
         startCountdown();
       } else {
-        await axios.post('http://localhost:8000/analyzePhoto',
-          new URLSearchParams({ analysis_id: analysisId })
-        );
         
         localStorage.setItem("analysis_id", analysisId);
         navigate("/diary-guide", { state: { analysisId } });
+
+        await axios.post('http://localhost:8000/analyzePhoto',
+          new URLSearchParams({ analysis_id: analysisId })
+        );
       }
     } catch (error) {
       console.error("사진 분석 요청 오류:", error);
