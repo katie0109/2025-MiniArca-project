@@ -340,7 +340,7 @@ async def get_entry(analysis_id: str):
 
         doc = await app.database.diary_entries.find_one({
             "_id": analysis_id,
-            "이모지": {"$exists": True}
+            "emojis": {"$exists": True}
         })
         if not doc:
             print(" 요청된 ID에 해당하는 데이터가 없거나 분석이 아직 완료되지 않았음.")
