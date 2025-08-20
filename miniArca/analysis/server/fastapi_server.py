@@ -405,7 +405,7 @@ async def select_and_save_emoji(id: str):
         try:
             update_result = await app.database.diary_entries.update_one(
                 {"_id": id},
-                {"$set": {"이모지": emojis}}
+                {"$set": {"emojis": emojis}}
             )
             
             if update_result.modified_count == 0:
