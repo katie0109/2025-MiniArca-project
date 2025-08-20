@@ -20,30 +20,28 @@
   text-align: center;
 }
 
-/* 이메일 전송 버튼 - 크기 확대 */
-.email-send-button {
-  position: fixed;
+.home-send-button {
   bottom: 15px;
   right: 32px;
   background: linear-gradient(to right, #e9c7c7, #c3e7b8);
   color: rgb(80, 80, 80);
   font-weight: bold;
-  padding: 24px 28px; /* 패딩 증가 */
+  padding: 20px 24px; /* 패딩 증가 */
   border-radius: 50px;
   border: none;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  font-size: 16px; /* 폰트 크기 증가 */
+  font-size: 20px; /* 폰트 크기 증가 */
   z-index: 50;
   transition: all 0.3s ease;
   outline: none;
   backdrop-filter: none;
 }
+
 .action-buttons-container {
   position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 30px;
+  right: 30px;
   display: flex;
   gap: 20px;
   z-index: 100;

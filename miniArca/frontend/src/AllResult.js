@@ -298,10 +298,11 @@ const AllResult = () => {
           {/* 홈으로 돌아가기 버튼 */}
           <button
             onClick={handleGoHome}
-            className="home-button"
+            className="home-send-button"
           >
             홈으로 돌아가기
           </button>
+      </div>
 
         {/* 오른쪽 하단 이메일 전송 버튼 */}
         <button
@@ -311,7 +312,6 @@ const AllResult = () => {
         >
           이메일로 전송하기
         </button>
-      </div>
 
       {/* 모달 오버레이 */}
       {isModalOpen && (
