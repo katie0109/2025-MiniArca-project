@@ -44,7 +44,7 @@ mongoose.connect(mongoUrl)
 // 스키마 정의
 const AnalysisSchema = new mongoose.Schema({
   _id: String,
-  이모지: [String],
+  emojis: [String],
   summary: String,
   timestamp: Date,
   emotion_analysis: {
@@ -171,7 +171,7 @@ app.get('/getDiaryData', async (req, res) => {
     }
 
     res.json({
-      emojis: document.이모지,
+      emojis: document.emojis,
       summary: document.summary,
       timestamp: document.timestamp ? document.timestamp.toISOString() : null,
       emotion_analysis: document.emotion_analysis,
